@@ -29,6 +29,15 @@ test("reference colors and materials stay unchanged, with or without add-ons", (
   }
 });
 
+test("legend colors come from the reference, even when low-contrast", () => {
+  for (const count of [0, 2]) {
+    const prompt = buildPrompt(count);
+    assert.match(prompt, /同一颗键的字符、字体、位置和字符颜色/);
+    assert.match(prompt, /不要按底色或整套键帽的主色去猜，也不要沿用图1原来的字符颜色/);
+    assert.match(prompt, /不要为了清晰改成深色/);
+  }
+});
+
 test("image 1 may be a kit without keycaps", () => {
   assert.match(buildPrompt(0), /图1也可能是没装键帽的键盘套件/);
 });
