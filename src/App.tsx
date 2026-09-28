@@ -1,5 +1,6 @@
 import { Download, Plus, TriangleAlert } from "lucide-react"
 import { ImageDrop } from "@/components/image-drop"
+import { KeyboardArt } from "@/components/keyboard-art"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -116,20 +117,17 @@ export default function App() {
               }
             />
             {phase.kind === "running" && (
-              <div className="absolute inset-0 grid place-items-center">
-                <div className="flex items-center gap-2 rounded-full bg-background/90 px-5 py-2.5 text-sm font-medium">
-                  <Spinner />
-                  正在换上新键帽 <span className="tabular-nums">{formatElapsed(tryOn.elapsed)}</span>
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-6">
+                <KeyboardArt swapping className="max-w-lg text-muted-foreground" />
+                <div className="rounded-full bg-background/90 px-5 py-2.5 text-sm font-medium">
+                  正在安装键帽 <span className="tabular-nums">{formatElapsed(tryOn.elapsed)}</span>
                 </div>
               </div>
             )}
           </figure>
         ) : (
-          <div className="grid aspect-[16/8] place-items-center rounded-2xl border border-dashed px-6 text-center">
-            <div className="flex max-w-md flex-col gap-3">
-              <p className="text-2xl font-semibold tracking-tight text-balance">看看你的键盘换上新键帽的样子</p>
-              <p className="text-sm text-muted-foreground">{copy.intro}</p>
-            </div>
+          <div className="grid aspect-[16/8] place-items-center rounded-2xl border border-dashed px-6">
+            <KeyboardArt className="max-w-lg text-muted-foreground" />
           </div>
         )}
 

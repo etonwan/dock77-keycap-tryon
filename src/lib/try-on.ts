@@ -160,15 +160,14 @@ export function useTryOn() {
 export type TryOn = ReturnType<typeof useTryOn>
 
 export const copy = {
-  title: "键帽试戴",
-  intro: "上传你的键盘照片和一套键帽的 base kit 图（增补套件图可选），AI 会生成这把键盘换上这套键帽后的样子。",
-  keyboard: { label: "键盘照片" },
+  title: "键帽试衣间",
+  keyboard: { label: "键盘/套件照片" },
   keycaps: { label: "键帽 base kit 图" },
-  addons: { label: "增补套件图", optional: "可选" },
+  addons: { label: "键帽 add-on kit 图", optional: "可选" },
   download: "下载 PNG",
   buttonLabel(phase: Phase) {
-    if (phase.kind === "running") return "生成中…"
-    return phase.kind === "idle" ? "生成效果图" : "重新生成"
+    if (phase.kind === "running") return "安装中…"
+    return phase.kind === "idle" ? "开始安装键帽" : "重新安装"
   },
   resultInfo(phase: Extract<Phase, { kind: "done" }>) {
     return `${phase.width} × ${phase.height} · 用时 ${phase.seconds} 秒`

@@ -29,6 +29,10 @@ test("reference colors and materials stay unchanged, with or without add-ons", (
   }
 });
 
+test("image 1 may be a kit without keycaps", () => {
+  assert.match(buildPrompt(0), /图1也可能是没装键帽的键盘套件/);
+});
+
 test("the closing rule stays last", () => {
   assert.match(buildPrompt(2), /不要加文字、水印或多余的键。$/);
 });

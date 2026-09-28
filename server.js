@@ -67,15 +67,15 @@ app.post(
     const body = await c.req.parseBody();
     const required = [body.keyboard, body.keycaps];
     if (!required.every((file) => file instanceof File)) {
-      return c.json({ error: "请同时上传键盘照片和键帽 base kit 图。" }, 400);
+      return c.json({ error: "请同时上传键盘/套件照片和键帽 base kit 图。" }, 400);
     }
     // Hono collects every "addons[]" field into an array; absent means none.
     const addons = [body["addons[]"] ?? []].flat();
     if (!addons.every((file) => file instanceof File)) {
-      return c.json({ error: "增补套件图读取失败，请重新选择。" }, 400);
+      return c.json({ error: "add-on kit 图读取失败，请重新选择。" }, 400);
     }
     if (addons.length > MAX_ADDONS) {
-      return c.json({ error: `增补套件图最多 ${MAX_ADDONS} 张。` }, 400);
+      return c.json({ error: `add-on kit 图最多 ${MAX_ADDONS} 张。` }, 400);
     }
     let prepared;
     try {
@@ -110,5 +110,5 @@ app.get("/api/jobs/:id/image.png", (c) => {
 app.use("/*", serveStatic({ root: "./dist" }));
 
 serve({ fetch: app.fetch, port: Number(process.env.PORT ?? 3000) }, (info) => {
-  console.log(`键帽试戴 listening on port ${info.port}`);
+  console.log(`键帽试衣间 listening on port ${info.port}`);
 });

@@ -131,3 +131,13 @@
     @apply font-sans;
     }
 }
+@theme {
+    --animate-keycap-swap: keycap-swap 3.6s ease-in-out infinite;
+
+    @keyframes keycap-swap {
+        0%, 20% { transform: translateY(0); opacity: 1; }
+        35%, 50% { transform: translateY(-16px); opacity: 0; }
+        65% { transform: translateY(0); opacity: 1; color: var(--foreground); }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+}

@@ -3,5 +3,5 @@ services:
     command: npm run build && npm start
     health: /
     portal:
-      title: 键帽试戴
-      description: 上传键盘照片和键帽 base kit 图，生成换键帽效果图。
+      title: 键帽试衣间
+      description: 上传键盘/套件照片和键帽 base kit 图，生成换键帽效果图。
