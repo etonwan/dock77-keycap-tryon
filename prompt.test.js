@@ -18,6 +18,17 @@ test("add-on images are numbered from 3, one per upload", () => {
   assert.doesNotMatch(three, /图6/);
 });
 
+test("reference colors and materials stay unchanged, with or without add-ons", () => {
+  for (const count of [0, 2]) {
+    const prompt = buildPrompt(count);
+    assert.match(prompt, /图2只用来参考配色、材质、字体和字符位置/);
+    assert.match(prompt, /不要改色、重新配色或统一不同键的颜色/);
+    assert.match(prompt, /不要改变参考键帽的材质、表面纹理、光泽或透光性/);
+    assert.match(prompt, /只允许图1光线造成的自然明暗和反光/);
+    if (count > 0) assert.match(prompt, /和图2一样只参考配色、材质、字体、字符和图案/);
+  }
+});
+
 test("the closing rule stays last", () => {
   assert.match(buildPrompt(2), /不要加文字、水印或多余的键。$/);
 });

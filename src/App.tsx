@@ -54,7 +54,6 @@ export default function App() {
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-4 xl:flex-row xl:items-center xl:gap-5">
           <div className="xl:mr-auto">
             <h1 className="text-lg font-semibold tracking-tight">{copy.title}</h1>
-            <p className="text-xs text-muted-foreground">{copy.duration}出图</p>
           </div>
           <div className="grid grid-cols-3 gap-3 xl:flex xl:items-center xl:gap-5">
             {slots.map((slot, index) => (
@@ -85,10 +84,15 @@ export default function App() {
               </div>
             ))}
           </div>
-          <Button size="lg" className="h-10 w-full px-5 xl:w-auto" disabled={!tryOn.canGenerate} onClick={tryOn.generate}>
-            {phase.kind === "running" && <Spinner />}
-            {copy.buttonLabel(phase)}
-          </Button>
+          <div className="flex items-center gap-2 xl:shrink-0">
+            <Button variant="ghost" size="lg" className="h-10 px-3" disabled={!tryOn.canClear} onClick={tryOn.clear}>
+              重置
+            </Button>
+            <Button size="lg" className="h-10 flex-1 px-5 xl:flex-none" disabled={!tryOn.canGenerate} onClick={tryOn.generate}>
+              {phase.kind === "running" && <Spinner />}
+              {copy.buttonLabel(phase)}
+            </Button>
+          </div>
         </div>
       </header>
 

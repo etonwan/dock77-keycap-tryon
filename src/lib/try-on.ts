@@ -101,6 +101,15 @@ export function useTryOn() {
   }
 
   const canGenerate = keyboard.length === 1 && keycaps.length === 1 && !running
+  const canClear = !running && (keyboard.length > 0 || keycaps.length > 0 || addons.length > 0 || phase.kind !== "idle")
+
+  function clear() {
+    if (!canClear) return
+    setKeyboard([])
+    setKeycaps([])
+    clearAddons()
+    setPhase({ kind: "idle" })
+  }
 
   async function generate() {
     if (!canGenerate) return
@@ -143,6 +152,8 @@ export function useTryOn() {
     elapsed,
     canGenerate,
     generate,
+    canClear,
+    clear,
   }
 }
 
@@ -154,7 +165,6 @@ export const copy = {
   keyboard: { label: "键盘照片" },
   keycaps: { label: "键帽 base kit 图" },
   addons: { label: "增补套件图", optional: "可选" },
-  duration: "大约需要 1–2 分钟",
   download: "下载 PNG",
   buttonLabel(phase: Phase) {
     if (phase.kind === "running") return "生成中…"
