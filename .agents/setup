@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Prepares a fresh Amp orb: installs the npm dependencies from the lockfile.
+# The web service itself (build + start) is declared in .amp/services.yaml.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+echo "node $(node -v), npm $(npm -v)"
+
+step_start=$SECONDS
+npm ci --no-audit --no-fund
+echo "npm ci took $((SECONDS - step_start))s"
