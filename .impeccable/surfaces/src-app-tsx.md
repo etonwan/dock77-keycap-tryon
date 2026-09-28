@@ -21,7 +21,7 @@ OWN-WORLD: Anodized graphite case (oklch 0.215) on a desk-dark ground (0.165), r
 
 STORY: The visitor sees three empty sockets and a status line naming what is missing, fills them, watches the LED turn on, presses the Enter keycap (or Enter), sees the key stay held while the caps "install" over the blurred photo, then gets the result with its size, time, and a download key.
 
-FIRST VIEWPORT: Top: the case bar, full content width (max 1280), badge keycap "键" plus 键帽试衣间 at left, three sockets with labels in the middle, 重置 and the Enter keycap at right (on mobile: badge row, 3-column sockets, full-width keys). Below: one status line (LED + state at left, measurements and download at right). Below that: the stage, the photo at full width in a recessed frame, or the line-drawn 60% board when empty.
+FIRST VIEWPORT: Top: the case bar, full content width (max 1280), brand keycap with a hanger legend (also the favicon) plus 键帽试衣间 at left, three sockets with labels in the middle, 重置 and the Enter keycap at right (on mobile: badge row, 3-column sockets, full-width keys). Below: one status line (LED + state at left, measurements and download at right). Below that: the stage, the photo at full width in a recessed frame, or the line-drawn 60% board when empty.
 
 FORM: Brief-pinned custom-keyboard world (owner's own words), position 1 of 1; no concept-seed roll because the owner pinned the world and then delegated the rest. Seed key: none (owner-pinned). Signature interaction: the physical Enter key and the on-screen Enter keycap are the same control; the keycap stays held while running. Motion grammar: 90 ms keycap travel, LED pulse while running, keycap-lift wave on the stage while installing, 700 ms unblur when the result lands; all respect reduced motion.
 

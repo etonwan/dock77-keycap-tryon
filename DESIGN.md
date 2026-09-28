@@ -198,6 +198,7 @@ components:
 ### Cards / Containers
 
 - **Case bar:** 20px 圆角的阳极石墨承载面，移动端 16px、宽屏 20px 内边距。
+- **Brand keycap:** 36px 骨白小键帽（8px 圆角、4px 前壁），印 20px 衣架图标，暗扣“试衣间”；浏览器图标 `public/favicon.svg` 画的是同一颗键帽。
 - **Image stage:** 18px 圆角的轴座黑舞台；有图时只保留 1px 内缘高光，无图时增加凹槽阴影。
 - **Border:** 不使用虚线投放框；结构边界由内阴影和半透明高光表达。
 
