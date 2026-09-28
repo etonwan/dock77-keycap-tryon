@@ -38,6 +38,16 @@ test("legend colors come from the reference, even when low-contrast", () => {
   }
 });
 
+test("the layout follows image 1 key by key, not the kit's full-size layout", () => {
+  for (const count of [0, 2]) {
+    const prompt = buildPrompt(count);
+    assert.match(prompt, /先数清图1每一排有几颗键/);
+    assert.match(prompt, /空位（[^）]*）保持空着，不要补上键帽/);
+    assert.match(prompt, /不要用它们替换或挤走图1原有的键/);
+    assert.match(prompt, /再换成图2里功能相同的那颗键帽/);
+  }
+});
+
 test("image 1 may be a kit without keycaps", () => {
   assert.match(buildPrompt(0), /图1也可能是没装键帽的键盘套件/);
 });
