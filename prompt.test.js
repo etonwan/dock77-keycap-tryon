@@ -44,7 +44,25 @@ test("the layout follows image 1 key by key, not the kit's full-size layout", ()
     assert.match(prompt, /先数清图1每一排有几颗键/);
     assert.match(prompt, /空位（[^）]*）保持空着，不要补上键帽/);
     assert.match(prompt, /不要用它们替换或挤走图1原有的键/);
-    assert.match(prompt, /再换成图2里功能相同的那颗键帽/);
+    assert.match(prompt, /字母、数字、符号、F 区、导航键和方向键，按字符找图2里同一颗键/);
+  }
+});
+
+test("themed legends and accent Esc/Enter keys still come from the kit", () => {
+  for (const count of [0, 2]) {
+    const prompt = buildPrompt(count);
+    assert.match(prompt, /^[^\n]*除了艺术帽，图1上的每一颗键帽都要换掉，包括颜色和周围不同的 Esc、回车等强调色键。/);
+    assert.match(prompt, /最后自查：Esc 和回车的底色、字符和字符颜色要和图2同位置的那颗键一致/);
+    assert.match(prompt, /修饰键（Esc、Tab、Caps Lock、Shift、Ctrl、Win、Alt、Fn、退格、回车）按所在的排和左右位置找，不要按字符找/);
+    assert.match(prompt, /Esc 是 F1 那一排最左边的键/);
+    assert.match(prompt, /Tab 是字母 Q 那一排最左边的键/);
+    assert.match(prompt, /Caps Lock 和回车是字母 A 那一排最左边和最右边的键/);
+    assert.match(prompt, /不要把上一排或下一排的键挪过来/);
+    assert.match(prompt, /强调色键（常见于 Esc 和回车）只是普通键帽，不是艺术帽/);
+    assert.match(prompt, /不要保留图1原来的颜色和字符/);
+    assert.match(prompt, /结果里每颗键帽的底色都必须是参考键帽图里出现过的颜色/);
+    assert.match(prompt, /图2那颗键印的是主题词或图标（不是 Esc、Enter），就照印图2的字/);
+    assert.match(prompt, /图2里找不到同位置、同宽度的键时，才用图2里同类键的配色和字体/);
   }
 });
 
