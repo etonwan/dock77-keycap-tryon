@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-28T10:22:23Z",
+  "title": "Design System: 键帽试衣间",
+  "extensions": {
+    "colorMeta": {
+      "desk-ground": { "role": "neutral", "displayName": "桌面深黑", "canonical": "oklch(0.165 0.004 260)", "tonalRamp": ["oklch(0.15 0.004 260)", "oklch(0.25 0.004 260)", "oklch(0.35 0.004 260)", "oklch(0.45 0.004 260)", "oklch(0.55 0.004 260)", "oklch(0.7 0.004 260)", "oklch(0.82 0.004 260)", "oklch(0.95 0.004 260)"] },
+      "bone-text": { "role": "neutral", "displayName": "骨白正文", "canonical": "oklch(0.95 0.008 85)", "tonalRamp": ["oklch(0.15 0.008 85)", "oklch(0.25 0.008 85)", "oklch(0.35 0.008 85)", "oklch(0.45 0.008 85)", "oklch(0.55 0.008 85)", "oklch(0.7 0.008 85)", "oklch(0.82 0.008 85)", "oklch(0.95 0.008 85)"] },
+      "case-graphite": { "role": "secondary", "displayName": "阳极石墨", "canonical": "oklch(0.215 0.005 260)", "tonalRamp": ["oklch(0.15 0.005 260)", "oklch(0.25 0.005 260)", "oklch(0.35 0.005 260)", "oklch(0.45 0.005 260)", "oklch(0.55 0.005 260)", "oklch(0.7 0.005 260)", "oklch(0.82 0.005 260)", "oklch(0.95 0.005 260)"] },
+      "socket-well": { "role": "neutral", "displayName": "轴座黑", "canonical": "oklch(0.125 0.004 260)", "tonalRamp": ["oklch(0.15 0.004 260)", "oklch(0.25 0.004 260)", "oklch(0.35 0.004 260)", "oklch(0.45 0.004 260)", "oklch(0.55 0.004 260)", "oklch(0.7 0.004 260)", "oklch(0.82 0.004 260)", "oklch(0.95 0.004 260)"] },
+      "bone-keycap": { "role": "primary", "displayName": "骨白 PBT", "canonical": "oklch(0.925 0.018 88)", "tonalRamp": ["oklch(0.15 0.018 88)", "oklch(0.25 0.018 88)", "oklch(0.35 0.018 88)", "oklch(0.45 0.018 88)", "oklch(0.55 0.018 88)", "oklch(0.7 0.018 88)", "oklch(0.82 0.018 88)", "oklch(0.95 0.018 88)"] },
+      "bone-legend": { "role": "neutral", "displayName": "深色键帽字面", "canonical": "oklch(0.22 0.012 70)", "tonalRamp": ["oklch(0.15 0.012 70)", "oklch(0.25 0.012 70)", "oklch(0.35 0.012 70)", "oklch(0.45 0.012 70)", "oklch(0.55 0.012 70)", "oklch(0.7 0.012 70)", "oklch(0.82 0.012 70)", "oklch(0.95 0.012 70)"] },
+      "graphite-keycap": { "role": "secondary", "displayName": "石墨键帽", "canonical": "oklch(0.3 0.006 260)", "tonalRamp": ["oklch(0.15 0.006 260)", "oklch(0.25 0.006 260)", "oklch(0.35 0.006 260)", "oklch(0.45 0.006 260)", "oklch(0.55 0.006 260)", "oklch(0.7 0.006 260)", "oklch(0.82 0.006 260)", "oklch(0.95 0.006 260)"] },
+      "graphite-legend": { "role": "neutral", "displayName": "石墨键帽字面", "canonical": "oklch(0.93 0.01 85)", "tonalRamp": ["oklch(0.15 0.01 85)", "oklch(0.25 0.01 85)", "oklch(0.35 0.01 85)", "oklch(0.45 0.01 85)", "oklch(0.55 0.01 85)", "oklch(0.7 0.01 85)", "oklch(0.82 0.01 85)", "oklch(0.95 0.01 85)"] },
+      "muted-surface": { "role": "neutral", "displayName": "静音表面", "canonical": "oklch(0.25 0.005 260)", "tonalRamp": ["oklch(0.15 0.005 260)", "oklch(0.25 0.005 260)", "oklch(0.35 0.005 260)", "oklch(0.45 0.005 260)", "oklch(0.55 0.005 260)", "oklch(0.7 0.005 260)", "oklch(0.82 0.005 260)", "oklch(0.95 0.005 260)"] },
+      "muted-text": { "role": "neutral", "displayName": "静音灰", "canonical": "oklch(0.7 0.008 260)", "tonalRamp": ["oklch(0.15 0.008 260)", "oklch(0.25 0.008 260)", "oklch(0.35 0.008 260)", "oklch(0.45 0.008 260)", "oklch(0.55 0.008 260)", "oklch(0.7 0.008 260)", "oklch(0.82 0.008 260)", "oklch(0.95 0.008 260)"] },
+      "destructive": { "role": "tertiary", "displayName": "错误红", "canonical": "oklch(0.72 0.18 25)", "tonalRamp": ["oklch(0.15 0.18 25)", "oklch(0.25 0.18 25)", "oklch(0.35 0.18 25)", "oklch(0.45 0.18 25)", "oklch(0.55 0.18 25)", "oklch(0.7 0.18 25)", "oklch(0.82 0.18 25)", "oklch(0.95 0.18 25)"] },
+      "subtle-border": { "role": "neutral", "displayName": "微光边线", "canonical": "oklch(1 0 0 / 8%)", "tonalRamp": ["oklch(0.15 0 0 / 8%)", "oklch(0.25 0 0 / 8%)", "oklch(0.35 0 0 / 8%)", "oklch(0.45 0 0 / 8%)", "oklch(0.55 0 0 / 8%)", "oklch(0.7 0 0 / 8%)", "oklch(0.82 0 0 / 8%)", "oklch(0.95 0 0 / 8%)"] },
+      "field-edge": { "role": "neutral", "displayName": "输入边缘", "canonical": "oklch(1 0 0 / 12%)", "tonalRamp": ["oklch(0.15 0 0 / 12%)", "oklch(0.25 0 0 / 12%)", "oklch(0.35 0 0 / 12%)", "oklch(0.45 0 0 / 12%)", "oklch(0.55 0 0 / 12%)", "oklch(0.7 0 0 / 12%)", "oklch(0.82 0 0 / 12%)", "oklch(0.95 0 0 / 12%)"] },
+      "focus-ring": { "role": "primary", "displayName": "骨白焦点环", "canonical": "oklch(0.925 0.018 88 / 75%)", "tonalRamp": ["oklch(0.15 0.018 88 / 75%)", "oklch(0.25 0.018 88 / 75%)", "oklch(0.35 0.018 88 / 75%)", "oklch(0.45 0.018 88 / 75%)", "oklch(0.55 0.018 88 / 75%)", "oklch(0.7 0.018 88 / 75%)", "oklch(0.82 0.018 88 / 75%)", "oklch(0.95 0.018 88 / 75%)"] },
+      "led-busy": { "role": "tertiary", "displayName": "运行琥珀", "canonical": "oklch(0.82 0.16 75)", "tonalRamp": ["oklch(0.15 0.16 75)", "oklch(0.25 0.16 75)", "oklch(0.35 0.16 75)", "oklch(0.45 0.16 75)", "oklch(0.55 0.16 75)", "oklch(0.7 0.16 75)", "oklch(0.82 0.16 75)", "oklch(0.95 0.16 75)"] },
+      "led-done": { "role": "tertiary", "displayName": "完成绿", "canonical": "oklch(0.8 0.17 150)", "tonalRamp": ["oklch(0.15 0.17 150)", "oklch(0.25 0.17 150)", "oklch(0.35 0.17 150)", "oklch(0.45 0.17 150)", "oklch(0.55 0.17 150)", "oklch(0.7 0.17 150)", "oklch(0.82 0.17 150)", "oklch(0.95 0.17 150)"] },
+      "led-error": { "role": "tertiary", "displayName": "状态红灯", "canonical": "oklch(0.68 0.21 25)", "tonalRamp": ["oklch(0.15 0.21 25)", "oklch(0.25 0.21 25)", "oklch(0.35 0.21 25)", "oklch(0.45 0.21 25)", "oklch(0.55 0.21 25)", "oklch(0.7 0.21 25)", "oklch(0.82 0.21 25)", "oklch(0.95 0.21 25)"] }
+    },
+    "typographyMeta": {
+      "title": { "displayName": "应用标题", "purpose": "应用名称；系统没有大型展示标题。" },
+      "body": { "displayName": "正文与状态", "purpose": "控件标签、状态文案和主要操作文字。" },
+      "label": { "displayName": "元数据", "purpose": "上传提示、张数和辅助动作。" },
+      "measurement": { "displayName": "仪表读数", "purpose": "计时、像素尺寸和秒数，使用表格数字。" }
+    },
+    "shadows": [
+      { "name": "case-depth", "value": "inset 0 1px 0 oklch(1 0 0 / 7%), 0 1px 0 oklch(0 0 0 / 40%), 0 24px 48px -28px oklch(0 0 0 / 90%)", "purpose": "顶部阳极石墨机壳的顶缘、接触边和环境深度。" },
+      { "name": "socket-recess", "value": "inset 0 2px 5px oklch(0 0 0 / 55%), inset 0 0 0 1px oklch(1 0 0 / 6%)", "purpose": "上传轴座的默认凹陷。" },
+      { "name": "stage-recess", "value": "inset 0 2px 8px oklch(0 0 0 / 50%), inset 0 0 0 1px oklch(1 0 0 / 6%)", "purpose": "无图片舞台的深凹槽。" },
+      { "name": "keycap-raised", "value": "0 1px 0 oklch(0 0 0 / 45%), 0 10px 18px -10px oklch(0 0 0 / 85%)", "purpose": "键帽静止时的实体抬升。" },
+      { "name": "keycap-pressed", "value": "0 0 0 oklch(0 0 0 / 45%), 0 4px 8px -6px oklch(0 0 0 / 85%)", "purpose": "键帽按下或运行保持时收紧的阴影。" }
+    ],
+    "motion": [
+      { "name": "keycap-travel", "value": "90ms cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "键帽按压、阴影和表面颜色反馈；减少动态时取消位移。" },
+      { "name": "socket-feedback", "value": "150ms", "purpose": "轴座边缘、字色和 MX 轴心悬停反馈。" },
+      { "name": "led-pulse", "value": "1.4s ease-in-out infinite", "purpose": "运行时琥珀状态灯在 100% 与 35% 不透明度间脉冲。" },
+      { "name": "keycap-swap", "value": "3.6s ease-in-out infinite", "purpose": "运行覆盖层中的逐键抬起、消失和落回波。" },
+      { "name": "result-reveal", "value": "700ms ease-out", "purpose": "结果图的滤镜、透明度和缩放复位；减少动态时取消过渡。" }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "骨白操作键",
+      "kind": "button",
+      "refersTo": "button-action",
+      "description": "用于页面唯一主操作的 PBT Enter 键帽。",
+      "html": "<button class=\"ds-keycap ds-keycap-bone\"><svg viewBox=\"0 0 24 24\" aria-hidden><path d=\"M9 10 4 15l5 5\"/><path d=\"M4 15h11a4 4 0 0 0 4-4V4\"/></svg>生成效果图</button>",
+      "css": ".ds-keycap{--ds-face:var(--primary,oklch(0.925 0.018 88));--ds-legend:var(--primary-foreground,oklch(0.22 0.012 70));height:44px;padding:0 20px;display:inline-flex;align-items:center;justify-content:center;gap:10px;border-style:solid;border-width:1px 3px 5px;border-color:color-mix(in oklch,var(--ds-face) 72%,white) color-mix(in oklch,var(--ds-face) 84%,black) color-mix(in oklch,var(--ds-face) 60%,black);border-radius:10px;background:linear-gradient(to bottom,oklch(1 0 0 / 10%),transparent 60%),var(--ds-face);color:var(--ds-legend);box-shadow:0 1px 0 oklch(0 0 0 / 45%),0 10px 18px -10px oklch(0 0 0 / 85%);font:600 14px/20px 'Geist Variable',sans-serif;transition:translate 90ms cubic-bezier(.16,1,.3,1),box-shadow 90ms cubic-bezier(.16,1,.3,1),background-color 90ms cubic-bezier(.16,1,.3,1)}.ds-keycap svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.55}.ds-keycap:hover{--ds-face:color-mix(in oklch,var(--primary,oklch(0.925 0.018 88)) 94%,white)}.ds-keycap:focus-visible{outline:2px solid var(--ring,oklch(0.925 0.018 88 / 75%));outline-offset:2px}.ds-keycap:active,.ds-keycap[data-held]{translate:0 2px;border-bottom-width:3px;box-shadow:0 0 0 oklch(0 0 0 / 45%),0 4px 8px -6px oklch(0 0 0 / 85%)}@media(prefers-reduced-motion:reduce){.ds-keycap{transition:none}.ds-keycap:active,.ds-keycap[data-held]{translate:none}}"
+    },
+    {
+      "name": "石墨辅助键",
+      "kind": "button",
+      "refersTo": "button-modifier",
+      "description": "用于重置、下载等辅助动作的石墨键帽。",
+      "html": "<button class=\"ds-keycap-secondary\">重置</button>",
+      "css": ".ds-keycap-secondary{--ds-face:var(--secondary,oklch(0.3 0.006 260));height:44px;padding:0 16px;border-style:solid;border-width:1px 3px 5px;border-color:color-mix(in oklch,var(--ds-face) 72%,white) color-mix(in oklch,var(--ds-face) 84%,black) color-mix(in oklch,var(--ds-face) 60%,black);border-radius:10px;background:linear-gradient(to bottom,oklch(1 0 0 / 10%),transparent 60%),var(--ds-face);color:var(--secondary-foreground,oklch(0.93 0.01 85));box-shadow:0 1px 0 oklch(0 0 0 / 45%),0 10px 18px -10px oklch(0 0 0 / 85%);font:500 14px/20px 'Geist Variable',sans-serif;transition:translate 90ms cubic-bezier(.16,1,.3,1),box-shadow 90ms cubic-bezier(.16,1,.3,1),background-color 90ms cubic-bezier(.16,1,.3,1)}.ds-keycap-secondary:hover{background-color:color-mix(in oklch,var(--ds-face) 94%,white)}.ds-keycap-secondary:focus-visible{outline:2px solid var(--ring,oklch(0.925 0.018 88 / 75%));outline-offset:2px}.ds-keycap-secondary:active{translate:0 2px;border-bottom-width:3px;box-shadow:0 0 0 oklch(0 0 0 / 45%),0 4px 8px -6px oklch(0 0 0 / 85%)}@media(prefers-reduced-motion:reduce){.ds-keycap-secondary{transition:none}.ds-keycap-secondary:active{translate:none}}"
+    },
+    {
+      "name": "空图片轴座",
+      "kind": "input",
+      "refersTo": "image-socket",
+      "description": "等待图片时显示 MX 十字轴心的凹入上传槽。",
+      "html": "<label class=\"ds-image-socket\"><input type=\"file\" accept=\"image/jpeg,image/png,image/webp\" aria-label=\"键盘照片\"><svg viewBox=\"0 0 24 24\" aria-hidden><rect x=\"3.5\" y=\"3.5\" width=\"17\" height=\"17\" rx=\"3\"/><path d=\"M10.5 7.25h3v3.25h3.25v3h-3.25v3.25h-3v-3.25H7.25v-3h3.25z\"/></svg></label>",
+      "css": ".ds-image-socket{width:96px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--well,oklch(0.125 0.004 260));color:color-mix(in oklch,var(--muted-foreground,oklch(0.7 0.008 260)) 70%,transparent);box-shadow:inset 0 2px 5px oklch(0 0 0 / 55%),inset 0 0 0 1px oklch(1 0 0 / 6%);cursor:pointer;transition:color 150ms,box-shadow 150ms}.ds-image-socket input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}.ds-image-socket svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round;transition:transform 150ms}.ds-image-socket rect{opacity:.55}.ds-image-socket:hover{color:var(--foreground,oklch(0.95 0.008 85));box-shadow:inset 0 2px 5px oklch(0 0 0 / 55%),inset 0 0 0 1px oklch(1 0 0 / 16%)}.ds-image-socket:hover svg{transform:scale(1.1)}.ds-image-socket:has(input:focus-visible){outline:2px solid var(--ring,oklch(0.925 0.018 88 / 75%));outline-offset:2px}@media(prefers-reduced-motion:reduce){.ds-image-socket svg{transition:none}.ds-image-socket:hover svg{transform:none}}"
+    },
+    {
+      "name": "运行状态灯",
+      "kind": "custom",
+      "description": "运行时以琥珀色脉冲的 8px 锁定指示灯。",
+      "html": "<span class=\"ds-status\"><i aria-hidden></i>正在安装键帽</span>",
+      "css": ".ds-status{display:inline-flex;align-items:center;gap:10px;color:var(--foreground,oklch(0.95 0.008 85));font:400 14px/20px 'Geist Variable',sans-serif}.ds-status i{width:8px;height:8px;flex:none;border-radius:999px;background:var(--led-busy,oklch(0.82 0.16 75));color:var(--led-busy,oklch(0.82 0.16 75));box-shadow:0 0 10px currentColor;animation:ds-led-pulse 1.4s ease-in-out infinite}@keyframes ds-led-pulse{0%,100%{opacity:1}50%{opacity:.35}}@media(prefers-reduced-motion:reduce){.ds-status i{animation:none}}"
+    },
+    {
+      "name": "机壳工具条",
+      "kind": "card",
+      "refersTo": "case-bar",
+      "description": "承载品牌、三个上传槽与操作键的阳极石墨机壳。",
+      "html": "<section class=\"ds-case\"><span class=\"ds-badge\">键</span><strong>键帽试衣间</strong></section>",
+      "css": ".ds-case{display:flex;align-items:center;gap:12px;padding:16px;border-radius:20px;background:var(--case,oklch(0.215 0.005 260));color:var(--foreground,oklch(0.95 0.008 85));box-shadow:inset 0 1px 0 oklch(1 0 0 / 7%),0 1px 0 oklch(0 0 0 / 40%),0 24px 48px -28px oklch(0 0 0 / 90%);font:600 16px/24px 'Geist Variable',sans-serif}.ds-badge{width:36px;height:36px;display:grid;place-items:center;border-style:solid;border-width:1px 3px 4px;border-color:oklch(0.98 0.018 88) oklch(0.78 0.018 88) oklch(0.55 0.018 88);border-radius:8px;background:linear-gradient(to bottom,oklch(1 0 0 / 10%),transparent 60%),var(--primary,oklch(0.925 0.018 88));color:var(--primary-foreground,oklch(0.22 0.012 70));box-shadow:0 1px 0 oklch(0 0 0 / 45%),0 10px 18px -10px oklch(0 0 0 / 85%);font-size:14px}@media(min-width:640px){.ds-case{padding:20px}}"
+    },
+    {
+      "name": "加载旋标",
+      "kind": "custom",
+      "description": "只嵌在按下状态主键中的 16px 线性 Loader2。",
+      "html": "<svg class=\"ds-spinner\" viewBox=\"0 0 24 24\" role=\"status\" aria-label=\"Loading\"><path d=\"M21 12a9 9 0 1 1-6.219-8.56\"/></svg>",
+      "css": ".ds-spinner{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;animation:ds-spin 1s linear infinite}@keyframes ds-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.ds-spinner{animation:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "桌面上的客制化键盘",
+    "overview": "这是一个始终处于深色模式的工具界面。页面把常规上传和执行控件做成一块俯视的客制化键盘：石墨色外壳承载凹入的轴座，骨白色主操作键和石墨色辅助键保留真实键帽的顶面、侧壁与按压行程。图片始终是舞台中最醒目的内容，界面本身只用低彩度中性色围合和解释它。\n\n彩色信息仅由锁定指示灯式状态点承担；其余界面维持骨白与石墨灰。中文正文紧凑直接，尺寸、耗时和秒数才切换到等宽字体。代码中的浅色 `:root` 变量是未改动的 shadcn 默认值；`html` 固定使用 `.dark` 和 `color-scheme: dark`，因此浅色变量不属于这个视觉世界。",
+    "keyCharacteristics": [
+      "始终深色、图片优先的单页操作界面。",
+      "俯视键帽、凹入轴座和 MX 十字轴心组成统一的硬件隐喻。",
+      "骨白只用于主操作与高优先级文字，石墨用于外壳、辅助键和背景层级。",
+      "状态色被限制在一个 8px 发光指示灯及错误文字。",
+      "动效模拟按键、换帽与结果显影，并为减少动态偏好提供静止版本。"
+    ],
+    "rules": [
+      { "name": "The Single LED Rule", "body": "彩色状态只出现在锁定指示灯式状态点及紧邻的错误文字；普通控件不借状态色装饰。", "section": "colors" },
+      { "name": "The Dark-Only Rule", "body": "新界面只扩展 `.dark` 令牌；不要从未使用的浅色 `:root` 默认值推导品牌色。", "section": "colors" },
+      { "name": "The Instrument Readout Rule", "body": "只有可比较的数字读数使用等宽字体；名称、按钮与叙述继续使用 Geist。", "section": "typography" },
+      { "name": "The Hardware Depth Rule", "body": "阴影必须解释一个实体关系：机壳凸起、轴座凹入或键帽行程；不要给普通文案和状态条添加通用卡片阴影。", "section": "elevation" }
+    ],
+    "dos": [
+      "Do 让照片占据状态行以下的完整内容宽度，让控件留在顶部机壳。",
+      "Do 将新主操作做成骨白键帽，将辅助操作做成石墨键帽。",
+      "Do 用凹槽、轴心、前壁和按压行程表达键盘硬件，而不是添加说明性装饰。",
+      "Do 为所有 90ms 按键、150ms 槽位、700ms 结果和循环动画保留减少动态的静止表现。",
+      "Do 使用 Lucide 线性图标或代码内的专用 SVG，并保持图标服务于动作含义。"
+    ],
+    "donts": [
+      "Don't 使用浅色主题、明亮大色块或把状态色扩展为普通控件配色。",
+      "Don't 使用虚线投放框、药丸按钮或独立居中的加载卡片。",
+      "Don't 把像素尺寸、耗时之外的正文切换为等宽字体。",
+      "Don't 给舞台外再套通用卡片，也不要让界面材质与用户照片争夺注意力。",
+      "Don't 把未使用的 shadcn 浅色 `:root` 默认变量记录成品牌系统。"
+    ]
+  }
+}

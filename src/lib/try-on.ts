@@ -169,6 +169,13 @@ export const copy = {
     if (phase.kind === "running") return "安装中…"
     return phase.kind === "idle" ? "开始安装键帽" : "重新安装"
   },
+  /** One line above the stage; `missing` lists the labels of empty required slots. */
+  status(phase: Phase, missing: string[]) {
+    if (phase.kind === "running") return "正在安装键帽"
+    if (phase.kind === "done") return "安装完成"
+    if (phase.kind === "error") return phase.message
+    return missing.length > 0 ? `还需要：${missing.join("、")}` : "准备就绪"
+  },
   resultInfo(phase: Extract<Phase, { kind: "done" }>) {
     return `${phase.width} × ${phase.height} · 用时 ${phase.seconds} 秒`
   },

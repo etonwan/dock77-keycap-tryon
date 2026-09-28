@@ -48,7 +48,7 @@ export function KeyboardArt({ swapping = false, className }: { swapping?: boolea
               className={swapping ? "animate-keycap-swap motion-reduce:animate-none" : undefined}
               style={swapping ? { animationDelay: `${k.delay}s` } : undefined}
             >
-              <rect x={k.x} y={k.y} width={k.w} height={k.h} rx={5} className="fill-background" />
+              <rect x={k.x} y={k.y} width={k.w} height={k.h} rx={5} className="fill-well" />
               <rect x={k.x + 5} y={k.y + 4} width={k.w - 10} height={k.h - 12} rx={3} opacity={0.5} />
             </g>
           </g>
