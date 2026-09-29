@@ -11,6 +11,11 @@ const RESULT_TTL_MS = 60 * 60 * 1000;
 // Optional add-on kit images (novelties, Mac mods, ...). The API takes up to
 // 16 images; a few keeps the model focused on the base kit.
 const MAX_ADDONS = 4;
+// Each visitor IP may start this many generations per rolling hour. Kept in
+// memory, so a restart resets everyone's count.
+const RATE_LIMIT = 15;
+const RATE_WINDOW_MS = 60 * 60 * 1000;
+const recentJobsByIp = new Map();
 
 // Jobs live in memory only: uploads are never stored, and finished images are
 // dropped after an hour or when the server restarts.
@@ -80,6 +85,20 @@ app.post(
     onError: (c) => c.json({ error: "图片太大了，所有图片加起来请小于 60 MB。" }, 413),
   }),
   async (c) => {
+    // nginx sets X-Real-IP; the container port is only reachable from localhost.
+    const ip = c.req.header("x-real-ip") ?? "direct";
+    const rateLimited = () => {
+      const now = Date.now();
+      const recent = (recentJobsByIp.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+      recentJobsByIp.set(ip, recent);
+      if (recent.length < RATE_LIMIT) return null;
+      const minutes = Math.ceil((recent[0] + RATE_WINDOW_MS - now) / 60000);
+      return c.json({ error: `生成次数已达上限（每小时 ${RATE_LIMIT} 次），请 ${minutes} 分钟后再试。` }, 429);
+    };
+    // Check before reading the upload, and again before counting it, since
+    // another upload from the same IP may have been accepted in between.
+    const limitedEarly = rateLimited();
+    if (limitedEarly) return limitedEarly;
     const body = await c.req.parseBody();
     const required = [body.keyboard, body.keycaps];
     if (!required.every((file) => file instanceof File)) {
@@ -102,6 +121,10 @@ app.post(
       return c.json({ error: "有一张图片无法读取。请上传 JPG、PNG 或 WebP 格式的图片。" }, 400);
     }
     const [keyboard, keycaps, ...preparedAddons] = prepared;
+    // Only accepted uploads count; rejected ones cost nothing.
+    const limitedLate = rateLimited();
+    if (limitedLate) return limitedLate;
+    recentJobsByIp.get(ip).push(Date.now());
     const id = randomUUID();
     jobs.set(id, { status: "running" });
     generate(id, keyboard, keycaps, preparedAddons);
