@@ -55,7 +55,7 @@ export type Preset = { name: string; src: string; thumb: string }
 // its menu thumbnail in public/presets/dock77/thumbs/.
 export const DOCK77 = {
   title: "Dock77配色",
-  items: ["银色", "深灰", "蓝紫", "冰粉", "浅灰", "冰蓝"].map(
+  items: ["浅灰", "深灰", "银色", "冰蓝", "冰粉", "蓝紫"].map(
     (name): Preset => ({ name, src: `/presets/dock77/${name}.webp`, thumb: `/presets/dock77/thumbs/${name}.webp` }),
   ),
 }

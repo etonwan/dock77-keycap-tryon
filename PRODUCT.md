@@ -23,7 +23,7 @@ It edits the user's real photo instead of rendering a generic board: camera angl
 ## Operating Context
 
 - Inputs: 键盘/套件照片 (required, one), 键帽 base kit 图 (required, one), 键帽 add-on kit 图 (optional, up to 4).
-- The keyboard slot also offers the Dock77 in six colorways (银色, 深灰, 蓝紫, 冰粉, 浅灰, 冰蓝; owner-supplied renders in `public/presets/dock77/`, named by file name) instead of uploading a photo.
+- The keyboard slot also offers the Dock77 in six colorways (浅灰, 深灰, 银色, 冰蓝, 冰粉, 蓝紫; owner-supplied renders in `public/presets/dock77/`, named by file name) instead of uploading a photo.
 - The base kit slot also offers a keycap library: 335 GMK sets (2020–2025) from a community GMK color guide, filterable by name, 12 color families, and year. Picking a set fills the base kit slot and, by default, the add-on slot with the set's other renders (max 4). Some sets have two base kits (e.g. light and dark); the visitor picks one. Each brand is a folder in `public/keycaps/<brand>/` (index.json, renders, thumbs); more brands are planned. The owner decided to show the renders without source attribution.
 - Generation runs as a server job with polling and takes about a minute or two; leaving the page mid-run is warned against.
 - Output is a PNG at the keyboard photo's aspect ratio, long edge 2048 px, downloadable as `keycap-tryon-<timestamp>.png`.
