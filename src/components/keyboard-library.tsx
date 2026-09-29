@@ -3,7 +3,9 @@ import { LibraryCard, LibraryFooter, LibrarySheet } from "@/components/library-s
 import { DOCK77, type Preset } from "@/lib/try-on"
 
 // A drawer for picking a ready-made keyboard, laid out like the keycap
-// library. Six colorways need no filters, so it is just the grid.
+// library. Six colorways need no filters, so it is just the grid, with big
+// pictures (one column on phones, two wider) so they fill the drawer instead
+// of leaving it half empty.
 export function KeyboardLibrary({
   open,
   onOpenChange,
@@ -39,7 +41,7 @@ export function KeyboardLibrary({
       }
     >
       <section aria-label="套件" className="min-h-0 flex-1 overflow-y-auto px-5 pt-1 pb-5">
-        <div className="grid grid-cols-2 gap-x-3 gap-y-4 lg:grid-cols-3">
+        <div className="grid gap-x-3 gap-y-4 sm:grid-cols-2">
           {DOCK77.items.map((preset) => {
             const on = selected?.name === preset.name
             return (

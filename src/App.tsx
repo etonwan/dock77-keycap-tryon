@@ -141,11 +141,14 @@ export default function App() {
                   onFiles={slot.onFiles}
                   multiple={slot.multiple}
                   menu={slot.menu}
+                  id={`slot-${index}`}
                   className="aspect-video w-full shrink-0 xl:aspect-auto xl:h-14 xl:w-24"
                 />
-                <div className="min-w-0 leading-tight">
-                  <div className="text-sm font-medium">{slot.label}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">
+                {/* The caption is part of the slot: clicking it opens the same menu or file picker. */}
+                <label htmlFor={`slot-${index}`} className="min-w-0 cursor-pointer leading-tight">
+                  {/* Two lines on phones, so a wrapped label doesn't push its status below its neighbours'. */}
+                  <span className="block text-sm font-medium max-sm:min-h-[2lh]">{slot.label}</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">
                     {slot.status}
                     {slot.onClear && (
                       <>
@@ -155,8 +158,8 @@ export default function App() {
                         </button>
                       </>
                     )}
-                  </div>
-                </div>
+                  </span>
+                </label>
               </div>
             ))}
           </div>

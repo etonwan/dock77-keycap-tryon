@@ -79,11 +79,14 @@ type ImageDropProps = {
    *  above uploading your own; dropping a file still works. `sources` gets a
    *  function that closes the menu. */
   menu?: { sources: (close: () => void) => ReactNode; own: { title: string; action: string } }
+  /** Id of the control a caption beside the socket can point at with
+   *  `<label htmlFor>`, so clicking the caption works like clicking the socket. */
+  id?: string
   className?: string
 }
 
 // Click to pick or drag images in; shows the picked images as a preview.
-export function ImageDrop({ label, previews, onFiles, multiple = false, compact = false, menu, className }: ImageDropProps) {
+export function ImageDrop({ label, previews, onFiles, multiple = false, compact = false, menu, id, className }: ImageDropProps) {
   const [dragging, setDragging] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
@@ -110,6 +113,8 @@ export function ImageDrop({ label, previews, onFiles, multiple = false, compact 
       "group/drop relative flex cursor-pointer items-center justify-center overflow-hidden rounded-[10px] bg-well text-muted-foreground/70",
       "shadow-[inset_0_2px_5px_oklch(0_0_0/0.55),inset_0_0_0_1px_oklch(1_0_0/0.06)] transition-[color,box-shadow] duration-150",
       "hover:text-foreground hover:shadow-[inset_0_2px_5px_oklch(0_0_0/0.55),inset_0_0_0_1px_oklch(1_0_0/0.16)]",
+      // Hovering a caption that labels the file input lights the socket too.
+      "has-[input:hover]:text-foreground has-[input:hover]:shadow-[inset_0_2px_5px_oklch(0_0_0/0.55),inset_0_0_0_1px_oklch(1_0_0/0.16)]",
       // Stays lit while its menu is open.
       "data-popup-open:text-foreground data-popup-open:shadow-[inset_0_2px_5px_oklch(0_0_0/0.55),inset_0_0_0_1px_oklch(1_0_0/0.16)]",
       "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
@@ -121,6 +126,7 @@ export function ImageDrop({ label, previews, onFiles, multiple = false, compact 
   const input = (
     <input
       ref={fileInput}
+      id={menu ? undefined : id}
       type="file"
       accept="image/jpeg,image/png,image/webp"
       multiple={multiple}
@@ -167,7 +173,7 @@ export function ImageDrop({ label, previews, onFiles, multiple = false, compact 
   // The socket becomes a menu button: pick from another source, or upload your own.
   return (
     <Popover open={menuOpen} onOpenChange={setMenuOpen}>
-      <PopoverTrigger aria-label={label} {...socket}>
+      <PopoverTrigger id={id} aria-label={label} {...socket}>
         {preview}
       </PopoverTrigger>
       {input}

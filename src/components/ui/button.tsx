@@ -12,7 +12,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         // Bone accent keycap: the one key you press to act.
-        default: "keycap keycap-bone font-semibold",
+        // Disabled keeps full opacity; keycap-bone dims and flattens it instead.
+        default: "keycap keycap-bone font-semibold disabled:opacity-100",
         outline: cn(
           flat,
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",

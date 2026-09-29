@@ -189,6 +189,17 @@
 @utility keycap-bone {
   --cap-face: var(--primary);
   --cap-legend: var(--primary-foreground);
+  /* Unavailable: still bone PBT, but dimmed, with a faint legend, and sunk
+     flush with the case (no front wall, no shadow), so it can't be pressed.
+     Fading the whole key would turn it into a grey like the modifier keys.
+     A held key (installing) is disabled too, but keeps its pressed look. */
+  &:disabled:not([data-held]) {
+    --cap-face: color-mix(in oklab, var(--primary) 72%, var(--case));
+    --cap-legend: color-mix(in oklab, var(--primary-foreground) 35%, var(--cap-face));
+    border-bottom-width: 1px;
+    background-image: none;
+    box-shadow: none;
+  }
 }
 @utility keycap-graphite {
   --cap-face: var(--secondary);

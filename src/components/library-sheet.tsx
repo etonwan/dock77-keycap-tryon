@@ -68,6 +68,8 @@ export function LibraryCard({
     <button
       type="button"
       aria-pressed={selected}
+      // Long names wrap to two lines; the tooltip shows the rest.
+      title={name}
       onClick={onClick}
       className="group/tile flex min-w-0 flex-col gap-1.5 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
@@ -82,7 +84,7 @@ export function LibraryCard({
         <img src={src} alt="" loading="lazy" className="aspect-[16/9] w-full object-cover" />
       </span>
       <span className="flex min-w-0 items-baseline gap-2 px-0.5">
-        <span className={cn("truncate text-sm", selected ? "text-foreground" : "text-foreground/85")}>{name}</span>
+        <span className={cn("line-clamp-2 text-sm break-words", selected ? "text-foreground" : "text-foreground/85")}>{name}</span>
         {detail !== undefined && <span className="shrink-0 text-xs text-muted-foreground tabular-nums">{detail}</span>}
       </span>
     </button>
