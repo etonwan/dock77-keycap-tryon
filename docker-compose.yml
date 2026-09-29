@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    # OPENAI_API_KEY (and optionally OPENAI_BASE_URL) go in a .env file next to this one.
+    env_file: .env
+    environment:
+      PORT: 31430
+    # The CDN connects to the server on port 31430; the app listens on the same port inside the container.
+    ports:
+      - "31430:31430"
