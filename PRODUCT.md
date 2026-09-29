@@ -34,7 +34,7 @@ It edits the user's real photo instead of rendering a generic board: camera angl
 - Uploads: JPG, PNG, or WebP, 60 MB total. Images are normalized server-side and never stored; results live in memory for one hour.
 - Visitor-facing errors only say what the visitor can act on (e.g. moderation rejection, file unreadable); key, quota, and billing problems stay in the server log.
 - Single page, Chinese UI (`zh-CN`), always dark.
-- No accounts, history, or gallery.
+- No accounts, history, or gallery. An optional shared access password (`ACCESS_PASSWORD`) gates generation for friends-only sharing; the page shows its own password screen and remembers a correct entry for 30 days.
 
 ## Brand Commitments
 

@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
-import { basicAuth } from "hono/basic-auth";
 import { bodyLimit } from "hono/body-limit";
+import { getSignedCookie, setSignedCookie } from "hono/cookie";
 import { prepareImage } from "./image.js";
 import { renderTryOn } from "./tryon.js";
 
@@ -41,18 +41,37 @@ async function generate(id, keyboard, keycaps, addons) {
 
 const app = new Hono();
 
-// Optional site-wide password. Visitors see the browser's login prompt; any
-// username works, only the password is checked.
+// Optional access password guarding the API (generation costs money). The page
+// itself stays public and shows its own password screen. Entering the password
+// sets a cookie signed with it, so changing the password logs everyone out.
 const accessPassword = process.env.ACCESS_PASSWORD;
-if (accessPassword) {
-  app.use(
-    "/*",
-    basicAuth({
-      verifyUser: (_username, password) => password === accessPassword,
-      invalidUserMessage: "需要访问密码。",
-    }),
-  );
-}
+const ACCESS_COOKIE = "access";
+
+app.post("/api/login", async (c) => {
+  const { password } = await c.req.json().catch(() => ({}));
+  if (accessPassword && password !== accessPassword) {
+    return c.json({ error: "密码不对，请再试一次。" }, 401);
+  }
+  if (accessPassword) {
+    await setSignedCookie(c, ACCESS_COOKIE, "ok", accessPassword, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "Lax",
+      maxAge: 30 * 24 * 60 * 60,
+    });
+  }
+  return c.body(null, 204);
+});
+
+app.use("/api/*", async (c, next) => {
+  if (accessPassword && (await getSignedCookie(c, accessPassword, ACCESS_COOKIE)) !== "ok") {
+    return c.json({ error: "访问密码已失效，请刷新页面重新输入。" }, 401);
+  }
+  await next();
+});
+
+// The page asks this on load: 204 means no password screen is needed.
+app.get("/api/session", (c) => c.body(null, 204));
 
 app.post(
   "/api/jobs",

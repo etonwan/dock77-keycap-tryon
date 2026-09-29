@@ -1,5 +1,6 @@
 import { useEffect, useState, type ComponentProps } from "react"
 import { CornerDownLeft, Download, Keyboard, LibraryBig, Plus } from "lucide-react"
+import { BrandKeycap } from "@/components/brand-keycap"
 import { ImageDrop, MenuAction, MenuSection } from "@/components/image-drop"
 import { KeyboardLibrary } from "@/components/keyboard-library"
 import { KeycapLibrary } from "@/components/keycap-library"
@@ -126,14 +127,7 @@ export default function App() {
       <header className="rounded-[20px] bg-case p-4 shadow-[inset_0_1px_0_oklch(1_0_0/0.07),0_1px_0_oklch(0_0_0/0.4),0_24px_48px_-28px_oklch(0_0_0/0.9)] sm:p-5">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:gap-6">
           <div className="flex items-center gap-3 xl:mr-auto">
-            {/* Brand keycap with a hanger legend: the fitting room (试衣间) for
-                keycaps. public/favicon.svg draws the same cap. */}
-            <span aria-hidden className="keycap keycap-bone grid size-9 place-items-center [--cap-depth:4px] [--cap-radius:8px]">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="size-5">
-                <path d="M10 6.5a2 2 0 1 1 2.8 1.8c-.5.3-.8.8-.8 1.3v.9" />
-                <path d="M12 10.5 3.5 16.6a.8.8 0 0 0 .5 1.4h16a.8.8 0 0 0 .5-1.4z" />
-              </svg>
-            </span>
+            <BrandKeycap />
             <h1 className="text-base font-semibold tracking-tight">{copy.title}</h1>
           </div>
           <div className="grid grid-cols-3 gap-3 xl:flex xl:items-center xl:gap-4">
