@@ -5,6 +5,7 @@
 //   node eval/run.js two-step            # describe.js + prompt.js + tryon.js
 //   node eval/run.js two-step --runs 5 --case sparta --concurrency 3
 //   node eval/run.js two-step --out two-step-v2   # after a prompt change
+//   node eval/run.js two-step --model gpt-image-2.5-flare --out flare
 //
 // Outputs go to eval/out/<out>/<case>-<i>.png (default <out> = variant) plus
 // a .json with timing, usage and (for two-step) the manifest and prompt.
@@ -16,9 +17,10 @@ import { buildPrompt as baselinePrompt } from "./baseline-prompt.js";
 import { inBatches, loadCases, outDir } from "./cases.js";
 import { editImage, renderTryOn } from "../tryon.js";
 
+// `options` is { model } for the image model; omitted means tryon.js's default.
 const variants = {
-  baseline: (kb, kit) => editImage([kb, kit], baselinePrompt(0), kb),
-  "two-step": (kb, kit) => renderTryOn(kb, kit, []),
+  baseline: (kb, kit, options) => editImage([kb, kit], baselinePrompt(0), kb, options),
+  "two-step": (kb, kit, options) => renderTryOn(kb, kit, [], options),
 };
 
 const { positionals, values } = parseArgs({
@@ -28,15 +30,17 @@ const { positionals, values } = parseArgs({
     case: { type: "string" },
     concurrency: { type: "string", default: "3" },
     out: { type: "string" },
+    model: { type: "string" },
   },
 });
 const [variant] = positionals;
 if (!variants[variant]) {
   console.error(
-    `usage: node eval/run.js <${Object.keys(variants).join("|")}> [--runs N] [--case name] [--concurrency N] [--out name]`,
+    `usage: node eval/run.js <${Object.keys(variants).join("|")}> [--runs N] [--case name] [--concurrency N] [--out name] [--model id]`,
   );
   process.exit(1);
 }
+const options = values.model ? { model: values.model } : {};
 
 const cases = await loadCases(values.case);
 const dir = path.join(outDir, values.out ?? variant);
@@ -51,10 +55,10 @@ await inBatches(jobs, Number(values.concurrency), async ({ c, i }) => {
   }
   const started = Date.now();
   try {
-    const { png, manifest, prompt, usage, describeUsage } = await variants[variant](c.keyboard, c.kit);
+    const { png, manifest, prompt, usage, describeUsage } = await variants[variant](c.keyboard, c.kit, options);
     const seconds = Math.round((Date.now() - started) / 1000);
     writeFileSync(`${stem}.png`, png);
-    writeFileSync(`${stem}.json`, JSON.stringify({ seconds, usage, describeUsage, manifest, prompt }, null, 1));
+    writeFileSync(`${stem}.json`, JSON.stringify({ ...options, seconds, usage, describeUsage, manifest, prompt }, null, 1));
     console.log(`${c.name}-${i}: done in ${seconds}s`);
   } catch (err) {
     console.error(`${c.name}-${i}: failed after ${Math.round((Date.now() - started) / 1000)}s: ${err.message}`);

@@ -11,10 +11,10 @@ const openai = new OpenAI();
 
 // Sends the prepared PNGs (keyboard first, then kits) and the prompt to the
 // image model. Returns the PNG at the keyboard photo's aspect ratio.
-export async function editImage(images, prompt, keyboard) {
+export async function editImage(images, prompt, keyboard, { model = MODEL } = {}) {
   const { width, height } = outputSize(keyboard.width, keyboard.height);
   const result = await openai.images.edit({
-    model: MODEL,
+    model,
     image: await Promise.all(images.map((image, i) => toFile(image.png, `image-${i + 1}.png`, { type: "image/png" }))),
     prompt,
     size: `${width}x${height}`,
@@ -24,14 +24,15 @@ export async function editImage(images, prompt, keyboard) {
 }
 
 // The whole try-on: read the keys (describe.js), write the prompt (prompt.js),
-// paint (editImage). Inputs are prepared images from image.js.
-export async function renderTryOn(keyboard, keycaps, addons) {
+// paint (editImage). Inputs are prepared images from image.js. `options` only
+// exists so eval/run.js can A/B image models.
+export async function renderTryOn(keyboard, keycaps, addons, options = {}) {
   const { manifest, usage: describeUsage } = await describeKeys(
     keyboard.png,
     keycaps.png,
     addons.map((addon) => addon.png),
   );
   const prompt = buildPrompt(manifest, addons.length);
-  const image = await editImage([keyboard, keycaps, ...addons], prompt, keyboard);
+  const image = await editImage([keyboard, keycaps, ...addons], prompt, keyboard, options);
   return { ...image, manifest, prompt, describeUsage };
 }
