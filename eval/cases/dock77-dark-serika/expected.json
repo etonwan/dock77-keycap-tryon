@@ -1,0 +1,16 @@
+{
+  "note": "Dock77 深灰配色官方渲染图（public/presets/dock77/深灰.webp，斜拍 3840×2160）换 GMK Serika R2 Latin Core base kit。原图已装深灰键帽：Esc 红色、Enter 青绿色，其余深灰/炭黑，字符浅灰；模型要覆盖而不是再装一套。75% 配列，右侧两列导航键 Home/PgUp、End/PgDn、Insert/Delete，↑ 在右 Shift 右边，Delete 下方是空位；底排 Ctrl、Win、Alt、空格、Fn、Ctrl、←↓→。顶部是带 overwrite 字样的扩展坞托盘，右上角是带 4 颗黄色指示灯的条纹模块，都不是键。",
+  "rows": [13, 16, 16, 15, 13, 9],
+  "checks": [
+    "Esc 键是黑色或深炭灰底，不再是原图的红色",
+    "回车键是黑色或深炭灰底，不再是原图的青绿色",
+    "F5–F8 是黄色底；F1–F4 和 F9–F12 是米白色底",
+    "字母和数字键是米白色底、深色字，不再是原图的深灰色底浅灰字",
+    "Tab、Caps Lock、左右 Shift、Backspace 都是黄色底",
+    "底排的 Ctrl、Win、Alt、Fn、右 Ctrl 都是黄色底，Win 位置印 Code",
+    "右侧两列导航键（Home/PgUp、End/PgDn、Insert/Delete）的位置和数量与原图一致，且是黄色底",
+    "三颗方向键 ← ↓ → 在底排右侧，↑ 在右 Shift 右边；Delete 下方仍是空位，没有多出或缺少键",
+    "每颗键只印一套字符：没有原图浅灰字符的残留、重影或与新字符叠印",
+    "机身、背景、拍摄角度和原图一致；顶部扩展坞托盘和右上角带 4 颗黄色指示灯的条纹模块保留，没有被画成键"
+  ]
+}

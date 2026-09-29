@@ -43,10 +43,24 @@ function renderRow(row) {
     .join("；");
 }
 
+// The painter tends to redraw the nav block the way the kit render lays it
+// out and drops keys, typically Insert/Delete beside Enter. Naming the nav
+// keys row by row pins them to the keyboard photo.
+const NAV_KEYS = new Set(["Home", "End", "PgUp", "PgDn", "Insert", "Delete"]);
+
+function navLine(rows) {
+  const perRow = rows.map((row) => row.map((key) => key[0]).filter((name) => NAV_KEYS.has(name)));
+  const count = perRow.flat().length;
+  if (count === 0) return "";
+  const parts = perRow.flatMap((names, i) => (names.length > 0 ? [`第${i + 1}排 ${names.join("、")}`] : []));
+  return `\n- 右侧导航键共 ${count} 颗：${parts.join("；")}。每颗都要画，位置照图1，不按图2的排法。`;
+}
+
 export function buildPrompt(manifest, addonCount) {
   const { bare, rows } = manifest;
   const total = rows.reduce((n, row) => n + row.length, 0);
   const rowLines = rows.map((row, i) => `第${i + 1}排（${row.length}颗）：${renderRow(row)}`).join("\n");
+  const nav = navLine(rows);
 
   const addonImages = Array.from({ length: addonCount }, (_, i) => `图${i + 3}`).join("、");
   const addonRole = addonCount === 0 ? "" : `\n- ${addonImages}是同一套键帽的增补套件，用法和图2一样。`;
@@ -60,14 +74,14 @@ export function buildPrompt(manifest, addonCount) {
 
 图片角色：
 - ${subject}
-- 图2是这套键帽的官方键位图，只用来看键帽的底色、字符、字符颜色和材质。它按全尺寸排版，比图1多出来的键（小键盘、导航区等）不要画进结果。${addonRole}
+- 图2是这套键帽的官方键位图，只用来看键帽的底色、字符、字符颜色和材质，不用来看键的位置。它按全尺寸排版，排法可能和图1不同：图2比图1多出来的键（小键盘等）不要画；图1上有的键一颗也不能少，位置照图1。${addonRole}
 
 只改：每颗键帽的底色、字符、字符颜色和材质，按下面的清单逐颗换。
 
 保持不变：
 - 拍摄角度、构图、裁切、光线、背景、阴影和景深。
 - 机身、铭牌、logo、指示灯、旋钮和线材。
-- 每一排的键数、每颗键的位置和宽度、键之间的空位。不增加、不删除、不移动任何键。${profile}
+- 每一排的键数、每颗键的位置和宽度、键之间的空位。不增加、不删除、不移动任何键。${nav}${profile}
 - 清单里标"原样保留"的键。
 
 键位清单（图1共 ${rows.length} 排 ${total} 颗键；从上到下，每排从左到右，顿号隔开的是不同的键。引号里的字照印，一字不改，写着"××图标"的画对应的图标；没有引号的键印它自己的字符）：

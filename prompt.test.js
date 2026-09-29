@@ -111,6 +111,20 @@ test("a bare kit changes image 1's role and drops the keep-the-profile rule", ()
   assert.equal(rowLine(bare, 1), rowLine(dressed, 1));
 });
 
+test("nav keys are spelled out row by row", () => {
+  const key = (name) => [name, name, "黄色", "黑色"];
+  const rows = [
+    ["Backspace", "Home", "PgUp"].map(key),
+    ["\\", "End", "PgDn"].map(key),
+    ["Enter", "Insert", "Delete"].map(key),
+  ];
+  assert.match(
+    buildPrompt({ bare: false, rows }, 0),
+    /右侧导航键共 6 颗：第1排 Home、PgUp；第2排 End、PgDn；第3排 Insert、Delete。每颗都要画，位置照图1/,
+  );
+  assert.doesNotMatch(buildPrompt(manifest, 0), /导航键共/);
+});
+
 test("the closing rule stays last", () => {
   assert.match(buildPrompt(manifest, 2), /不要加清单以外的键、文字或水印。$/);
 });
