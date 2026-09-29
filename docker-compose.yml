@@ -1,3 +1,5 @@
+name: dock77-keycap-tryon
+
 services:
   web:
     build: .
