@@ -6,7 +6,7 @@ services:
     image: dock77-keycap-tryon
     container_name: dock77-keycap-tryon
     restart: unless-stopped
-    # OPENAI_API_KEY (and optionally OPENAI_BASE_URL) go in a .env file next to this one.
+    # OPENAI_API_KEY (and optionally OPENAI_BASE_URL, VISION_BASE_URL, VISION_API_KEY) go in a .env file next to this one.
     env_file: .env
     environment:
       PORT: 31430

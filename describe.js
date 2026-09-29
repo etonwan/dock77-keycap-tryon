@@ -6,7 +6,12 @@ import OpenAI from "openai";
 // model is good at it, and its answer is plain text we can check.
 const DESCRIBE_MODEL = "gpt-6-astra";
 
-const openai = new OpenAI();
+// This stage can go through a separate OpenAI-compatible endpoint (e.g. a CPA
+// proxy) while image generation stays on OpenAI. Unset falls back to OPENAI_*.
+const openai = new OpenAI({
+  apiKey: process.env.VISION_API_KEY || undefined,
+  baseURL: process.env.VISION_BASE_URL || undefined,
+});
 
 function instructions(addonCount) {
   const addons =
