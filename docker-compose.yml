@@ -3,6 +3,7 @@ name: dock77-keycap-tryon
 services:
   web:
     build: .
+    image: dock77-keycap-tryon
     container_name: dock77-keycap-tryon
     restart: unless-stopped
     # OPENAI_API_KEY (and optionally OPENAI_BASE_URL) go in a .env file next to this one.
