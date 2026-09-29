@@ -1,10 +1,10 @@
-import { useEffect } from "react"
+import { useEffect, type ComponentProps } from "react"
 import { CornerDownLeft, Download, Plus } from "lucide-react"
 import { ImageDrop } from "@/components/image-drop"
 import { KeyboardArt } from "@/components/keyboard-art"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
-import { copy, formatElapsed, MAX_ADDONS, useTryOn } from "@/lib/try-on"
+import { copy, DOCK77, formatElapsed, MAX_ADDONS, useTryOn } from "@/lib/try-on"
 import { cn } from "@/lib/utils"
 
 type Slot = {
@@ -13,6 +13,7 @@ type Slot = {
   onFiles: (files: File[]) => void
   status: string
   multiple?: boolean
+  presets?: ComponentProps<typeof ImageDrop>["presets"]
   onClear?: () => void
 }
 
@@ -43,6 +44,7 @@ export default function App() {
       previews: tryOn.keyboardUrls,
       onFiles: tryOn.setKeyboard,
       status: tryOn.keyboard.length > 0 ? "点击更换" : "点击或拖入",
+      presets: { ...DOCK77, onPick: (preset) => tryOn.setKeyboard([preset]) },
     },
     {
       ...copy.keycaps,
@@ -67,14 +69,15 @@ export default function App() {
   const stageImage = phase.kind === "done" ? phase.imageUrl : tryOn.keyboardUrls[0]
 
   // The install key is the Enter key: pressing Enter on the real keyboard
-  // presses it on screen. Focused controls and IME composition keep Enter.
+  // presses it on screen. Focused controls, open menus, and IME composition
+  // keep Enter.
   const { canGenerate, generate } = tryOn
   useEffect(() => {
     if (!canGenerate) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Enter" || event.repeat || event.isComposing) return
       if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return
-      if (event.target instanceof Element && event.target.closest("button, a, input, textarea, select, [contenteditable]")) return
+      if (event.target instanceof Element && event.target.closest("button, a, input, textarea, select, [contenteditable], [role=dialog]")) return
       event.preventDefault()
       generate()
     }
@@ -107,6 +110,7 @@ export default function App() {
                   previews={slot.previews}
                   onFiles={slot.onFiles}
                   multiple={slot.multiple}
+                  presets={slot.presets}
                   className="aspect-video w-full shrink-0 xl:aspect-auto xl:h-14 xl:w-24"
                 />
                 <div className="min-w-0 leading-tight">

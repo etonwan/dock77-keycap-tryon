@@ -47,15 +47,39 @@ export function formatElapsed(seconds: number) {
 // Must match MAX_ADDONS in server.js.
 export const MAX_ADDONS = 4
 
-// Preview URLs for picked files, released when the files change.
-function useObjectUrls(files: readonly File[]) {
+/** A ready-made image the visitor can pick instead of uploading their own. */
+export type Preset = { name: string; src: string; thumb: string }
+
+// Dock77 in its six colorways, for visitors without a photo of their own
+// board. Each name is a file name: the render in public/presets/dock77/ and
+// its menu thumbnail in public/presets/dock77/thumbs/.
+export const DOCK77 = {
+  title: "Dock77 配色套件",
+  items: ["银色", "深灰", "蓝紫", "冰粉", "浅灰", "冰蓝"].map(
+    (name): Preset => ({ name, src: `/presets/dock77/${name}.webp`, thumb: `/presets/dock77/thumbs/${name}.webp` }),
+  ),
+}
+
+// Preview URLs for picked images, released when the picks change. A preset
+// is already a served file, so it previews from its own URL.
+function usePreviewUrls(picks: readonly (File | Preset)[]) {
   const [urls, setUrls] = useState<string[]>([])
   useEffect(() => {
-    const created = files.map((file) => URL.createObjectURL(file))
+    const created = picks.map((pick) => (pick instanceof File ? URL.createObjectURL(pick) : pick.src))
     setUrls(created)
-    return () => created.forEach((url) => URL.revokeObjectURL(url))
-  }, [files])
+    return () => {
+      for (const url of created) if (url.startsWith("blob:")) URL.revokeObjectURL(url)
+    }
+  }, [picks])
   return urls
+}
+
+// The server only takes uploads, so a preset is downloaded and sent as one.
+async function asFile(pick: File | Preset) {
+  if (pick instanceof File) return pick
+  const response = await fetch(pick.src)
+  if (!response.ok) throw new Error("键盘图加载失败，请重试。")
+  return new File([await response.blob()], `${pick.name}.webp`, { type: "image/webp" })
 }
 
 function useElapsedSeconds(startedAt: number | null) {
@@ -69,15 +93,16 @@ function useElapsedSeconds(startedAt: number | null) {
 }
 
 export function useTryOn() {
-  // Each slot holds a list: keyboard and keycaps hold at most one file.
-  const [keyboard, setKeyboard] = useState<File[]>([])
+  // Each slot holds a list: keyboard and keycaps hold at most one file. The
+  // keyboard can also be a preset.
+  const [keyboard, setKeyboard] = useState<(File | Preset)[]>([])
   const [keycaps, setKeycaps] = useState<File[]>([])
   const [addons, setAddons] = useState<File[]>([])
   const [addonsTrimmed, setAddonsTrimmed] = useState(false)
   const [phase, setPhase] = useState<Phase>({ kind: "idle" })
-  const keyboardUrls = useObjectUrls(keyboard)
-  const keycapsUrls = useObjectUrls(keycaps)
-  const addonUrls = useObjectUrls(addons)
+  const keyboardUrls = usePreviewUrls(keyboard)
+  const keycapsUrls = usePreviewUrls(keycaps)
+  const addonUrls = usePreviewUrls(addons)
   const elapsed = useElapsedSeconds(phase.kind === "running" ? phase.startedAt : null)
   const running = phase.kind === "running"
 
@@ -116,7 +141,7 @@ export function useTryOn() {
     setPhase({ kind: "running", startedAt: Date.now() })
     try {
       const body = new FormData()
-      body.append("keyboard", keyboard[0])
+      body.append("keyboard", await asFile(keyboard[0]))
       body.append("keycaps", keycaps[0])
       for (const addon of addons) body.append("addons[]", addon)
       const response = await fetch("/api/jobs", { method: "POST", body })

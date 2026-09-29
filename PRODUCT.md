@@ -23,6 +23,7 @@ It edits the user's real photo instead of rendering a generic board: camera angl
 ## Operating Context
 
 - Inputs: 键盘/套件照片 (required, one), 键帽 base kit 图 (required, one), 键帽 add-on kit 图 (optional, up to 4).
+- The keyboard slot also offers the Dock77 in six colorways (银色, 深灰, 蓝紫, 冰粉, 浅灰, 冰蓝; owner-supplied renders in `public/presets/dock77/`, named by file name) instead of uploading a photo.
 - Generation runs as a server job with polling and takes about a minute or two; leaving the page mid-run is warned against.
 - Output is a PNG at the keyboard photo's aspect ratio, long edge 2048 px, downloadable as `keycap-tryon-<timestamp>.png`.
 - Community vocabulary used as-is in the UI: base kit, add-on kit, novelties, artisan (艺术帽), 轴体, 定位板.
