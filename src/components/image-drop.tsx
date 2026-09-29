@@ -1,6 +1,4 @@
-import { useId, useRef, useState, type DragEvent } from "react"
-import { ImageUp } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useId, useRef, useState, type DragEvent, type ReactNode } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import type { Preset } from "@/lib/try-on"
 import { cn } from "@/lib/utils"
@@ -16,6 +14,83 @@ function SwitchStem({ className }: { className?: string }) {
   )
 }
 
+// A tile in the preset menu, framed like the stage: well-dark with a faint
+// inner edge that lights up bone when its button (a `group/tile`) is hovered.
+export const menuTile =
+  "relative overflow-hidden rounded-lg bg-well after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:shadow-[inset_0_0_0_1px_oklch(1_0_0/0.07)] after:transition-shadow after:duration-150 group-hover/tile:after:shadow-[inset_0_0_0_1px_var(--ring)]"
+
+/** A captioned group in a slot menu. */
+export function MenuSection({ title, children }: { title: string; children: ReactNode }) {
+  const titleId = useId()
+  return (
+    <div role="group" aria-labelledby={titleId} className="flex flex-col gap-2">
+      <div id={titleId} className="px-0.5 text-xs text-muted-foreground">
+        {title}
+      </div>
+      {children}
+    </div>
+  )
+}
+
+/** Ready-made images as a 3-column grid of named thumbnails. */
+export function PresetGrid({ items, onPick }: { items: Preset[]; onPick: (preset: Preset) => void }) {
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {items.map((preset) => (
+        <button
+          key={preset.name}
+          type="button"
+          onClick={() => onPick(preset)}
+          className="group/tile flex min-w-0 flex-col gap-1.5 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          <span className={cn(menuTile, "block")}>
+            <img src={preset.thumb} alt="" className="aspect-[3/2] w-full object-cover" />
+          </span>
+          <span className="truncate px-0.5 text-xs text-muted-foreground transition-colors duration-150 group-hover/tile:text-foreground">
+            {preset.name}
+          </span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
+/** A full-width menu tile that does something: an icon, what it does, and a hint. */
+export function MenuAction({
+  icon,
+  title,
+  hint,
+  onClick,
+  className,
+}: {
+  icon: ReactNode
+  title: string
+  hint: string
+  onClick: () => void
+  className?: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        menuTile,
+        "group/tile flex h-16 items-center gap-3 px-4 text-left text-muted-foreground transition-colors duration-150 hover:text-foreground",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+        className,
+      )}
+    >
+      <span className="shrink-0 transition-transform duration-150 group-hover/tile:scale-110 motion-reduce:transition-none motion-reduce:group-hover/tile:scale-100">
+        {icon}
+      </span>
+      <span className="flex min-w-0 flex-col gap-0.5">
+        <span className="text-sm font-medium text-foreground">{title}</span>
+        <span className="truncate text-xs">{hint}</span>
+      </span>
+    </button>
+  )
+}
+
 type ImageDropProps = {
   label: string
   /** Preview URLs of the picked images; several are shown as a mosaic. */
@@ -24,18 +99,18 @@ type ImageDropProps = {
   multiple?: boolean
   /** Icon only, for small thumbnail-sized drop targets. */
   compact?: boolean
-  /** Ready-made images. Clicking then opens a menu with these and uploading
-   *  your own; dropping a file still works. */
-  presets?: { title: string; items: Preset[]; onPick: (preset: Preset) => void }
+  /** Other sources for this slot. Clicking then opens a menu with these
+   *  above uploading your own; dropping a file still works. `sources` gets a
+   *  function that closes the menu. */
+  menu?: { sources: (close: () => void) => ReactNode; own: { title: string; action: string } }
   className?: string
 }
 
 // Click to pick or drag images in; shows the picked images as a preview.
-export function ImageDrop({ label, previews, onFiles, multiple = false, compact = false, presets, className }: ImageDropProps) {
+export function ImageDrop({ label, previews, onFiles, multiple = false, compact = false, menu, className }: ImageDropProps) {
   const [dragging, setDragging] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
-  const presetsTitleId = useId()
   const pick = (list: FileList | null) => {
     const files = [...(list ?? [])]
     if (files.length > 0) onFiles(multiple ? files : files.slice(0, 1))
@@ -74,10 +149,10 @@ export function ImageDrop({ label, previews, onFiles, multiple = false, compact 
       accept="image/jpeg,image/png,image/webp"
       multiple={multiple}
       aria-label={label}
-      // With presets the menu opens the file picker, so the input itself
+      // With a menu, the menu opens the file picker, so the input itself
       // stays out of the tab order.
-      tabIndex={presets ? -1 : undefined}
-      aria-hidden={presets ? true : undefined}
+      tabIndex={menu ? -1 : undefined}
+      aria-hidden={menu ? true : undefined}
       className="sr-only"
       onChange={(event) => {
         pick(event.target.files)
@@ -104,7 +179,7 @@ export function ImageDrop({ label, previews, onFiles, multiple = false, compact 
     </>
   )
 
-  if (!presets) {
+  if (!menu) {
     return (
       <label {...socket}>
         {input}
@@ -113,7 +188,7 @@ export function ImageDrop({ label, previews, onFiles, multiple = false, compact 
     )
   }
 
-  // The socket becomes a menu button: pick a preset, or upload your own.
+  // The socket becomes a menu button: pick from another source, or upload your own.
   return (
     <Popover open={menuOpen} onOpenChange={setMenuOpen}>
       <PopoverTrigger aria-label={label} {...socket}>
@@ -128,45 +203,24 @@ export function ImageDrop({ label, previews, onFiles, multiple = false, compact 
         align="start"
         sideOffset={8}
         aria-label={label}
-        className="w-[min(22rem,calc(100vw-2rem))] gap-3 rounded-[14px] p-3 shadow-[inset_0_1px_0_oklch(1_0_0/0.07),0_24px_48px_-24px_oklch(0_0_0/0.9)] motion-reduce:data-closed:animate-none motion-reduce:data-open:animate-none"
+        className="w-[min(22rem,calc(100vw-2rem))] gap-4 rounded-[14px] p-3 shadow-[inset_0_1px_0_oklch(1_0_0/0.07),0_24px_48px_-24px_oklch(0_0_0/0.9)] motion-reduce:data-closed:animate-none motion-reduce:data-open:animate-none"
       >
-        <div role="group" aria-labelledby={presetsTitleId} className="flex flex-col gap-2">
-          <div id={presetsTitleId} className="px-0.5 text-xs text-muted-foreground">
-            {presets.title}
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {presets.items.map((preset) => (
-              <button
-                key={preset.name}
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false)
-                  presets.onPick(preset)
-                }}
-                className="group/preset flex min-w-0 flex-col gap-1.5 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-              >
-                {/* Framed like the stage; the frame lights up bone on hover. */}
-                <span className="relative block overflow-hidden rounded-lg bg-well after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:shadow-[inset_0_0_0_1px_oklch(1_0_0/0.07)] after:transition-shadow after:duration-150 group-hover/preset:after:shadow-[inset_0_0_0_1px_var(--ring)]">
-                  <img src={preset.thumb} alt="" className="aspect-[3/2] w-full object-cover" />
-                </span>
-                <span className="truncate px-0.5 text-xs text-muted-foreground transition-colors duration-150 group-hover/preset:text-foreground">
-                  {preset.name}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-        <Button
-          variant="secondary"
-          className="h-10 w-full gap-2"
-          onClick={() => {
-            setMenuOpen(false)
-            fileInput.current?.click()
-          }}
-        >
-          <ImageUp className="opacity-60" aria-hidden />
-          上传自己的照片
-        </Button>
+        {/* Sibling sources for the same slot: each gets the same caption and
+            the same kind of tile. */}
+        {menu.sources(() => setMenuOpen(false))}
+        <MenuSection title={menu.own.title}>
+          {/* An empty socket, like the slot itself: bring your own. */}
+          <MenuAction
+            icon={<SwitchStem className="size-6" />}
+            title={menu.own.action}
+            hint="JPG、PNG 或 WebP，也可直接拖进上方的槽位"
+            className="shadow-[inset_0_2px_5px_oklch(0_0_0/0.55)]"
+            onClick={() => {
+              setMenuOpen(false)
+              fileInput.current?.click()
+            }}
+          />
+        </MenuSection>
       </PopoverContent>
     </Popover>
   )

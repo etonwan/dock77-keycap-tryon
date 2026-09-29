@@ -54,7 +54,7 @@ export type Preset = { name: string; src: string; thumb: string }
 // board. Each name is a file name: the render in public/presets/dock77/ and
 // its menu thumbnail in public/presets/dock77/thumbs/.
 export const DOCK77 = {
-  title: "Dock77 配色套件",
+  title: "Dock77配色",
   items: ["银色", "深灰", "蓝紫", "冰粉", "浅灰", "冰蓝"].map(
     (name): Preset => ({ name, src: `/presets/dock77/${name}.webp`, thumb: `/presets/dock77/thumbs/${name}.webp` }),
   ),
@@ -78,7 +78,7 @@ function usePreviewUrls(picks: readonly (File | Preset)[]) {
 async function asFile(pick: File | Preset) {
   if (pick instanceof File) return pick
   const response = await fetch(pick.src)
-  if (!response.ok) throw new Error("键盘图加载失败，请重试。")
+  if (!response.ok) throw new Error(`${pick.name} 图片加载失败，请重试。`)
   return new File([await response.blob()], `${pick.name}.webp`, { type: "image/webp" })
 }
 
@@ -93,11 +93,12 @@ function useElapsedSeconds(startedAt: number | null) {
 }
 
 export function useTryOn() {
-  // Each slot holds a list: keyboard and keycaps hold at most one file. The
-  // keyboard can also be a preset.
+  // Each slot holds a list: keyboard and keycaps hold at most one image. Any
+  // slot can hold presets: Dock77 for the keyboard, keycap library sets for
+  // the other two.
   const [keyboard, setKeyboard] = useState<(File | Preset)[]>([])
-  const [keycaps, setKeycaps] = useState<File[]>([])
-  const [addons, setAddons] = useState<File[]>([])
+  const [keycaps, setKeycaps] = useState<(File | Preset)[]>([])
+  const [addons, setAddons] = useState<(File | Preset)[]>([])
   const [addonsTrimmed, setAddonsTrimmed] = useState(false)
   const [phase, setPhase] = useState<Phase>({ kind: "idle" })
   const keyboardUrls = usePreviewUrls(keyboard)
@@ -115,7 +116,7 @@ export function useTryOn() {
   }, [running])
 
   // Picking add-ons replaces the previous set, like the other two slots.
-  function pickAddons(files: File[]) {
+  function pickAddons(files: (File | Preset)[]) {
     setAddons(files.slice(0, MAX_ADDONS))
     setAddonsTrimmed(files.length > MAX_ADDONS)
   }
@@ -142,8 +143,8 @@ export function useTryOn() {
     try {
       const body = new FormData()
       body.append("keyboard", await asFile(keyboard[0]))
-      body.append("keycaps", keycaps[0])
-      for (const addon of addons) body.append("addons[]", addon)
+      body.append("keycaps", await asFile(keycaps[0]))
+      for (const addon of await Promise.all(addons.map(asFile))) body.append("addons[]", addon)
       const response = await fetch("/api/jobs", { method: "POST", body })
       const created = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(created.error ?? "上传失败，请重试。")

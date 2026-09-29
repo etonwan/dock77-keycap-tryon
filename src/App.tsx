@@ -1,9 +1,11 @@
-import { useEffect, type ComponentProps } from "react"
-import { CornerDownLeft, Download, Plus } from "lucide-react"
-import { ImageDrop } from "@/components/image-drop"
+import { useEffect, useState, type ComponentProps } from "react"
+import { CornerDownLeft, Download, LibraryBig, Plus } from "lucide-react"
+import { ImageDrop, MenuAction, MenuSection, PresetGrid } from "@/components/image-drop"
+import { KeycapLibrary } from "@/components/keycap-library"
 import { KeyboardArt } from "@/components/keyboard-art"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { BRANDS } from "@/lib/keycap-library"
 import { copy, DOCK77, formatElapsed, MAX_ADDONS, useTryOn } from "@/lib/try-on"
 import { cn } from "@/lib/utils"
 
@@ -13,7 +15,7 @@ type Slot = {
   onFiles: (files: File[]) => void
   status: string
   multiple?: boolean
-  presets?: ComponentProps<typeof ImageDrop>["presets"]
+  menu?: ComponentProps<typeof ImageDrop>["menu"]
   onClear?: () => void
 }
 
@@ -31,6 +33,7 @@ const LED = {
 // and the result get the rest of the page.
 export default function App() {
   const tryOn = useTryOn()
+  const [libraryOpen, setLibraryOpen] = useState(false)
   const { phase } = tryOn
   const running = phase.kind === "running"
   const addonStatus = tryOn.addonsTrimmed
@@ -44,13 +47,42 @@ export default function App() {
       previews: tryOn.keyboardUrls,
       onFiles: tryOn.setKeyboard,
       status: tryOn.keyboard.length > 0 ? "点击更换" : "点击或拖入",
-      presets: { ...DOCK77, onPick: (preset) => tryOn.setKeyboard([preset]) },
+      menu: {
+        sources: (close) => (
+          <MenuSection title={DOCK77.title}>
+            <PresetGrid
+              items={DOCK77.items}
+              onPick={(preset) => {
+                close()
+                tryOn.setKeyboard([preset])
+              }}
+            />
+          </MenuSection>
+        ),
+        own: { title: "自己的套件", action: "上传照片" },
+      },
     },
     {
       ...copy.keycaps,
       previews: tryOn.keycapsUrls,
       onFiles: tryOn.setKeycaps,
       status: tryOn.keycaps.length > 0 ? "点击更换" : "点击或拖入",
+      menu: {
+        sources: (close) => (
+          <MenuSection title="键帽库">
+            <MenuAction
+              icon={<LibraryBig className="size-6" strokeWidth={1.5} aria-hidden />}
+              title={BRANDS.length === 1 ? `打开 ${BRANDS[0].name} 键帽库` : "打开键帽库"}
+              hint="按颜色、年份挑选，add-on 一起带上"
+              onClick={() => {
+                close()
+                setLibraryOpen(true)
+              }}
+            />
+          </MenuSection>
+        ),
+        own: { title: "自己的键帽", action: "上传图片" },
+      },
     },
     {
       ...copy.addons,
@@ -110,7 +142,7 @@ export default function App() {
                   previews={slot.previews}
                   onFiles={slot.onFiles}
                   multiple={slot.multiple}
-                  presets={slot.presets}
+                  menu={slot.menu}
                   className="aspect-video w-full shrink-0 xl:aspect-auto xl:h-14 xl:w-24"
                 />
                 <div className="min-w-0 leading-tight">
@@ -198,6 +230,16 @@ export default function App() {
           </div>
         )}
       </main>
+
+      <KeycapLibrary
+        open={libraryOpen}
+        onOpenChange={setLibraryOpen}
+        onUse={(base, addons) => {
+          tryOn.setKeycaps([base])
+          // The set's add-ons replace whatever add-ons were there before.
+          tryOn.pickAddons(addons)
+        }}
+      />
     </div>
   )
 }
