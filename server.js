@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
+import { basicAuth } from "hono/basic-auth";
 import { bodyLimit } from "hono/body-limit";
 import { prepareImage } from "./image.js";
 import { renderTryOn } from "./tryon.js";
@@ -39,6 +40,19 @@ async function generate(id, keyboard, keycaps, addons) {
 }
 
 const app = new Hono();
+
+// Optional site-wide password. Visitors see the browser's login prompt; any
+// username works, only the password is checked.
+const accessPassword = process.env.ACCESS_PASSWORD;
+if (accessPassword) {
+  app.use(
+    "/*",
+    basicAuth({
+      verifyUser: (_username, password) => password === accessPassword,
+      invalidUserMessage: "需要访问密码。",
+    }),
+  );
+}
 
 app.post(
   "/api/jobs",
