@@ -6,6 +6,6 @@ services:
     env_file: .env
     environment:
       PORT: 31430
-    # The CDN connects to the server on port 31430; the app listens on the same port inside the container.
+    # The app listens on port 31430, exposed on the same port on the host.
     ports:
       - "31430:31430"
