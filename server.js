@@ -3,21 +3,13 @@ import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
-import OpenAI, { toFile } from "openai";
-import { outputSize, prepareImage } from "./image.js";
-import { buildPrompt } from "./prompt.js";
+import { prepareImage } from "./image.js";
+import { renderTryOn } from "./tryon.js";
 
-// Sunburst is the GPT Image 2.5 variant tuned for precise edits: we want the
-// photo kept as-is and only the keycaps changed.
-const MODEL = "gpt-image-2.5-sunburst";
-const QUALITY = "high";
 const RESULT_TTL_MS = 60 * 60 * 1000;
 // Optional add-on kit images (novelties, Mac mods, ...). The API takes up to
 // 16 images; a few keeps the model focused on the base kit.
 const MAX_ADDONS = 4;
-
-// Reads OPENAI_API_KEY from the environment. The key stays on the server.
-const openai = new OpenAI();
 
 // Jobs live in memory only: uploads are never stored, and finished images are
 // dropped after an hour or when the server restarts.
@@ -32,22 +24,13 @@ function describeError(err) {
 
 async function generate(id, keyboard, keycaps, addons) {
   const started = Date.now();
-  const { width, height } = outputSize(keyboard.width, keyboard.height);
   try {
-    const result = await openai.images.edit({
-      model: MODEL,
-      image: [
-        await toFile(keyboard.png, "keyboard.png", { type: "image/png" }),
-        await toFile(keycaps.png, "keycaps.png", { type: "image/png" }),
-        ...(await Promise.all(addons.map((addon, i) => toFile(addon.png, `addon-${i + 1}.png`, { type: "image/png" })))),
-      ],
-      prompt: buildPrompt(addons.length),
-      size: `${width}x${height}`,
-      quality: QUALITY,
-    });
+    const { png, width, height, usage, describeUsage } = await renderTryOn(keyboard, keycaps, addons);
     const seconds = Math.round((Date.now() - started) / 1000);
-    jobs.set(id, { status: "done", png: Buffer.from(result.data[0].b64_json, "base64"), width, height, seconds });
-    console.log(`job ${id} done: ${width}x${height} in ${seconds}s, usage ${JSON.stringify(result.usage)}`);
+    jobs.set(id, { status: "done", png, width, height, seconds });
+    console.log(
+      `job ${id} done: ${width}x${height} in ${seconds}s, usage ${JSON.stringify(usage)}, describe usage ${JSON.stringify(describeUsage)}`,
+    );
   } catch (err) {
     console.error(`job ${id} failed:`, err);
     jobs.set(id, { status: "error", error: describeError(err) });

@@ -1,0 +1,16 @@
+{
+  "note": "75% 配列渲染图（斜拍、960×540；右侧两列导航块 Home/PgUp、End/PgDn、Insert/Delete；右上角是指示灯块不是键）换 GMK Dracula v2 Git Core base kit。原图 Esc 和 Enter 是淡紫色。",
+  "rows": [13, 16, 16, 15, 13, 9],
+  "checks": [
+    "Esc 键是深色底，印的字是 Git，不再是原图的淡紫色 Esc",
+    "回车键是深色底，印的字是 Commit，不再是原图的淡紫色 Enter",
+    "Tab 位置印 Tag，Caps Lock 位置印 Push，左 Shift 位置印 Rebase，且这三颗各在自己那一排的最左边，没有整体下移一排",
+    "第2排最左只有一颗 ` 键，第3排最左是印 Tag 的键；整张图没有出现两颗 ~ 键",
+    "Backspace 位置印 Revert",
+    "F5–F8 是黑色底；F1–F4 和 F9–F12 是蓝灰色底",
+    "字母和数字键是蓝灰色底、白色字",
+    "右侧两列导航键（Home/PgUp、End/PgDn、Insert/Delete）的位置和数量与原图一致",
+    "三颗方向键在底排右侧，↑ 在右 Shift 右边；没有多出或缺少方向键",
+    "机身、背景、拍摄角度和原图一致，右上角的指示灯块保留"
+  ]
+}

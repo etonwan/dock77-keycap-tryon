@@ -1,42 +1,78 @@
-// Images are sent in this order: 图1 = keyboard photo, 图2 = base kit,
-// 图3 onwards = add-on kits.
-export function buildPrompt(addonCount) {
+// Stage 2 of the try-on: the text sent to the image model together with the
+// images (图1 = keyboard photo, 图2 = base kit, 图3 onwards = add-on kits).
+//
+// The manifest comes from describe.js: { bare, rows }, where each row is a list
+// of keys [name, legend, base, legendColor], or [name, "保留"] for an artisan
+// keycap that stays. The prompt states what to change and what to keep, then
+// lists every key so the image model only has to paint, not count or match.
+
+function isKept(key) {
+  return key[1] === "保留";
+}
+
+function sameStyle(a, b) {
+  return !isKept(a) && !isKept(b) && a[2] === b[2] && a[3] === b[3];
+}
+
+// A key prints its own name unless the kit prints something else there, which
+// is quoted: `Tab→"Tag"`. A blank legend (the space bar) is said outright.
+function renderKey([name, legend]) {
+  const text = legend.replace(/\s+/g, " ").trim();
+  if (text === name) return name;
+  if (text === "") return `${name}（不印字）`;
+  return `${name}→"${text}"`;
+}
+
+// Consecutive keys with the same colors become one group, e.g.
+// `Q、W、E、R（米白色底，金棕色字）`. The 、 keeps a multi-word name or a
+// quoted legend from being read as part of its neighbor: with plain spaces,
+// `Backspace 地球键→"Insert"` got painted as one wide key printing Insert.
+function renderRow(row) {
+  const groups = [];
+  for (const key of row) {
+    const last = groups[groups.length - 1];
+    if (last && sameStyle(last[0], key)) last.push(key);
+    else groups.push([key]);
+  }
+  return groups
+    .map((group) => {
+      const [first] = group;
+      if (isKept(first)) return `${first[0]}（原样保留）`;
+      return `${group.map(renderKey).join("、")}（${first[2]}底，${first[3]}字）`;
+    })
+    .join("；");
+}
+
+export function buildPrompt(manifest, addonCount) {
+  const { bare, rows } = manifest;
+  const total = rows.reduce((n, row) => n + row.length, 0);
+  const rowLines = rows.map((row, i) => `第${i + 1}排（${row.length}颗）：${renderRow(row)}`).join("\n");
+
   const addonImages = Array.from({ length: addonCount }, (_, i) => `图${i + 3}`).join("、");
-  const addonRules =
-    addonCount === 0
-      ? ""
-      : `
+  const addonRole = addonCount === 0 ? "" : `\n- ${addonImages}是同一套键帽的增补套件，用法和图2一样。`;
 
-${addonImages}是同一套键帽的增补套件（例如 Mac 修饰键、特殊尺寸键、Novelties），和图2一样只参考配色、材质、字体、字符和图案，不要照搬它们的排列、背景、标题或尺寸标注：
-- 图1里的某颗键，如果增补套件里有对应它的版本（功能和尺寸相同，比如 Mac 的 command、option），优先用增补套件里的那颗，否则用图2里的。
-- 增补套件里对不上图1任何一颗键的键帽，不要加进来。`;
+  const subject = bare
+    ? "图1是没装键帽的键盘套件（只有轴体或定位板）。按轴位和定位板开孔给每个轴位装上一颗键帽，键帽的高度和轮廓参考图2。"
+    : "图1是要编辑的照片。除了键帽，一切保持原样。";
+  const profile = bare ? "" : "\n- 键帽的高度和轮廓，看起来是真实拍摄的实物。";
 
-  return `图1是用户的真实键盘照片，图2是一套键帽的官方键位图（base kit 渲染图）。请生成“图1这把键盘换上这套键帽”的真实照片。除了艺术帽，图1上的每一颗键帽都要换掉，包括颜色和周围不同的 Esc、回车等强调色键。
+  return `任务：把图1这把键盘的键帽换成图2这套键帽，生成一张"图1这把键盘装上这套键帽"的真实照片。
 
-图1也可能是没装键帽的键盘套件（只有轴体或定位板）。这种情况下，按图1的轴位和定位板开孔确定每颗键的位置和尺寸，给每个轴位装上对应的键帽，键帽的高度和轮廓参考图2。
+图片角色：
+- ${subject}
+- 图2是这套键帽的官方键位图，只用来看键帽的底色、字符、字符颜色和材质。它按全尺寸排版，比图1多出来的键（小键盘、导航区等）不要画进结果。${addonRole}
 
-严格保留图1：
+只改：每颗键帽的底色、字符、字符颜色和材质，按下面的清单逐颗换。
+
+保持不变：
 - 拍摄角度、构图、裁切、光线、背景、阴影和景深。
-- 键盘机身、铭牌、logo、线材，以及艺术帽（造型特殊的装饰键帽）。
-- 每颗键的位置、尺寸和数量：先数清图1每一排有几颗键、每颗多宽、哪里留着空位，结果里每排的键数和宽度都要一样。原配列、分区间隙、方向键位置都不变，不增加、不删除、不移动任何键；空位（例如方向键旁边的空位或 logo 位置）保持空着，不要补上键帽。
-- 键帽的高度和轮廓与图1一致，看起来是真实拍摄的实物。
+- 机身、铭牌、logo、指示灯、旋钮和线材。
+- 每一排的键数、每颗键的位置和宽度、键之间的空位。不增加、不删除、不移动任何键。${profile}
+- 清单里标"原样保留"的键。
 
-按图2替换键帽：
-- 图2只用来参考配色、材质、字体和字符位置，不要照搬图2的配列、背景、标题或尺寸标注。
-- 图2通常按全尺寸配列排版，比图1多出很多键（例如小键盘、导航区、多出来的修饰键和备用键）。这些键不要加到图1上，也不要用它们替换或挤走图1原有的键。
-- 逐颗对应：先认出图1里每颗键是什么键（看它原本的字符、图标和所在位置，例如 page up、delete、地球键），再换成图2里的对应键帽。字母、数字、符号、F 区、导航键和方向键，按字符找图2里同一颗键。修饰键（Esc、Tab、Caps Lock、Shift、Ctrl、Win、Alt、Fn、退格、回车）按所在的排和左右位置找，不要按字符找：很多键帽套件会把这些键印成主题词、图标或 logo，而不是印 Esc、Enter。在图2里这样找：Esc 是 F1 那一排最左边的键；退格是数字那一排最右边的键；Tab 是字母 Q 那一排最左边的键；Caps Lock 和回车是字母 A 那一排最左边和最右边的键；两个 Shift 是字母 Z 那一排两头的键；Ctrl、Win、Alt、Fn 在空格那一排。找到后照搬它的底色、字符和字符颜色。每颗修饰键只从图2的同一排取，不要把上一排或下一排的键挪过来。
-- 图1里颜色和周围不同的强调色键（常见于 Esc 和回车）只是普通键帽，不是艺术帽，同样换成图2对应位置的键帽，不要保留图1原来的颜色和字符。
-- 按图2把每一类键（字母、数字、F 区、修饰键、Esc、回车、方向键、空格、导航键）换成对应的底色和字符颜色。
-- 字符以图2为准：去掉图1键帽上原有的全部印字（包括副字符和其他语言的字符），换成图2里同一颗键的字符、字体、位置和字符颜色。
-- 字符颜色要从图2里对应的键上逐类看清楚，不要按底色或整套键帽的主色去猜，也不要沿用图1原来的字符颜色。浅底上的浅色、金色或其他低对比度字符也要照样还原，不要为了清晰改成深色。
-- 图2里找不到同位置、同宽度的键时，才用图2里同类键的配色和字体，字符保留该键原本的含义。${addonRules}
+键位清单（图1共 ${rows.length} 排 ${total} 颗键；从上到下，每排从左到右，顿号隔开的是不同的键。引号里的字照印，一字不改，写着"××图标"的画对应的图标；没有引号的键印它自己的字符）：
+${rowLines}
 
-忠实还原参考键帽的配色和材质：
-- 每颗替换后的键帽，其底色、字符颜色和配色分布必须与对应的参考键帽一致。不要改色、重新配色或统一不同键的颜色。
-- 不要改变参考键帽的材质、表面纹理、光泽或透光性。只允许图1光线造成的自然明暗和反光，不要沿用原键帽的颜色或材质。
-- 结果里每颗键帽的底色都必须是参考键帽图里出现过的颜色。图1原键帽特有的颜色（例如强调色的 Esc、回车）不能留在结果里。
-
-最后自查：Esc 和回车的底色、字符和字符颜色要和图2同位置的那颗键一致，不能还是图1原来的样子。图2那颗键印的是主题词或图标（不是 Esc、Enter），就照印图2的字。
-
-不要加文字、水印或多余的键。`;
+键帽的材质、表面质感和光泽与图2一致，只带上图1光线造成的自然明暗和反光。字符颜色照清单，浅色或低对比度的字也照样印，不要改成深色。
+不要加清单以外的键、文字或水印。`;
 }
