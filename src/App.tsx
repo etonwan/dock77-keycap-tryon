@@ -187,9 +187,13 @@ export default function App() {
             className="mr-auto flex min-w-0 items-center gap-2.5 text-sm"
           >
             <span aria-hidden className={cn("size-2 shrink-0 rounded-full bg-current shadow-[0_0_10px_currentColor]", LED[led])} />
-            <span className={phase.kind === "error" ? "text-destructive" : undefined}>{copy.status(phase, missing)}</span>
+            <span className={phase.kind === "error" ? "text-destructive" : undefined}>{copy.status(phase, missing, tryOn.elapsed)}</span>
           </p>
-          {running && <span className="font-mono text-sm text-muted-foreground tabular-nums">{formatElapsed(tryOn.elapsed)}</span>}
+          {running && (
+            <span className="text-sm text-muted-foreground">
+              <span className="font-mono tabular-nums">{formatElapsed(tryOn.elapsed)}</span> · {copy.eta}
+            </span>
+          )}
           {phase.kind === "done" && (
             <div className="flex items-center gap-4 max-sm:w-full max-sm:justify-between">
               <span className="font-mono text-xs text-muted-foreground tabular-nums">{copy.resultInfo(phase)}</span>

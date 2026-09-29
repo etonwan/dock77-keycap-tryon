@@ -185,7 +185,25 @@ export function useTryOn() {
 
 export type TryOn = ReturnType<typeof useTryOn>
 
+// Playful lines shown while generating, one every 10 seconds across the
+// usual ~2 minutes. They set the mood; they are not real progress.
+const WAITING_TIPS = [
+  "开工啦，先去倒杯水吧",
+  "正在拔下旧键帽…",
+  "正在清点新键帽，一颗都不能少",
+  "正在对准十字轴…",
+  "正在逐颗按上新键帽",
+  "正在核对每颗键的字符位置",
+  "空格键比较长，得多花点功夫",
+  "正在调教大键卫星轴",
+  "正在打磨光影和反光",
+  "好饭不怕晚，马上就好",
+  "最后检查一遍有没有装反",
+  "正在擦掉指纹，准备交付",
+]
+
 export const copy = {
+  eta: "全程约 2 分钟",
   title: "键帽试衣间",
   keyboard: { label: "键盘/套件照片" },
   keycaps: { label: "键帽 base kit 图" },
@@ -196,8 +214,12 @@ export const copy = {
     return phase.kind === "idle" ? "开始安装键帽" : "重新安装"
   },
   /** One line above the stage; `missing` lists the labels of empty required slots. */
-  status(phase: Phase, missing: string[]) {
-    if (phase.kind === "running") return "正在安装键帽"
+  status(phase: Phase, missing: string[], elapsed: number) {
+    if (phase.kind === "running") {
+      if (elapsed >= 150) return "这把键盘有点讲究，再给师傅一点时间"
+      if (elapsed >= 120) return "比预计慢一点，好饭不怕晚"
+      return WAITING_TIPS[Math.floor(elapsed / 10)]
+    }
     if (phase.kind === "done") return "安装完成"
     if (phase.kind === "error") return phase.message
     return missing.length > 0 ? `还需要：${missing.join("、")}` : "准备就绪"
