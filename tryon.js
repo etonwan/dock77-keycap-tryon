@@ -3,9 +3,8 @@ import { describeKeys } from "./describe.js";
 import { outputSize } from "./image.js";
 import { buildPrompt } from "./prompt.js";
 
-// Sunburst is the GPT Image 2.5 variant tuned for precise edits: we want the
-// photo kept as-is and only the keycaps changed.
-const MODEL = "gpt-image-2.5-sunburst";
+// GPT Image 2.5 Flare. We want the photo kept as-is and only the keycaps changed.
+const MODEL = "gpt-image-2.5-flare";
 const QUALITY = "high";
 
 const openai = new OpenAI();
