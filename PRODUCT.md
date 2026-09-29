@@ -39,6 +39,7 @@ It edits the user's real photo instead of rendering a generic board: camera angl
 ## Brand Commitments
 
 - Name: 键帽试衣间.
+- Maker mark: the Overwrite Studio logo sits next to the app's hanger keycap, as a graphite keycap legend (owner-chosen).
 - Owner-pinned direction: 简洁但高级、极客、客制化键盘的感觉 (clean but premium, geeky, custom-keyboard vibe).
 
 ## Evidence on Hand
