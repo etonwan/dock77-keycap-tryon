@@ -25,6 +25,7 @@ const jobs = new Map();
 // the operator's concern and stay in the server log.
 function describeError(err) {
   if (err.code === "moderation_blocked") return "图片没有通过内容审核，请换一张图再试。";
+  if (err.code === "not_keyboard") return "第一张图里没有认出电脑键盘，请上传键盘或键盘套件的照片。";
   return "生成失败，请稍后再试。";
 }
 

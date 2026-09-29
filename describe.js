@@ -19,6 +19,8 @@ function instructions(addonCount) {
 
 任务：列出图1上每一颗键，并为每颗键写出换上这套键帽后它应该是什么样子。结果会交给一个图像模型去画，所以每颗键都要写清楚。
 
+第零步，先判断图1是不是一把电脑键盘（没装键帽的键盘套件也算）。计算器、手机、钢琴、遥控器等其他带按键的东西都不算。如果不是，只输出 {"is_keyboard": false, "rows": []}，不要做后面的步骤。
+
 第一步，读图1：
 - 从上到下逐排，每排从左到右，列出每颗键。用键的通用名字（Esc、F1、1、Q、Tab、Caps Lock、Shift、Ctrl、Win、Alt、Fn、Space、Enter、Backspace、Home、PgUp、Delete、←、↑ 等）。符号键用主字符（\`、-、=、[、]、\\、;、'、,、.、/）。
 - 机身上的铭牌、指示灯、旋钮、屏幕、logo、线材不是键，不要列入。
@@ -33,7 +35,7 @@ function instructions(addonCount) {
 - 图2里多出来的键（小键盘、图1没有的导航键等）不要用。
 
 第三步，只输出下面格式的 JSON，不要加任何解释或代码块标记：
-{"bare": false, "rows": [[["Esc","Git","黑色","青色"],["F1","F1","蓝灰色","白色"]], [["\`","\`","蓝灰色","白色"]]]}
+{"is_keyboard": true, "bare": false, "rows": [[["Esc","Git","黑色","青色"],["F1","F1","蓝灰色","白色"]], [["\`","\`","蓝灰色","白色"]]]}
 
 - rows 是排的数组，每排是键的数组，每颗键是 [键名, 要印的字, 底色, 字符颜色]。要印的字写在一行里，不要换行。
 - 保留的艺术帽写成 [键名, "保留"]，例如 ["彩虹苹果艺术帽","保留"]。
@@ -47,6 +49,7 @@ function dataUrl(png) {
 function parseManifest(text) {
   const json = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
   const manifest = JSON.parse(json);
+  if (manifest.is_keyboard === false) throw Object.assign(new Error("image 1 is not a keyboard"), { code: "not_keyboard" });
   if (!Array.isArray(manifest.rows) || manifest.rows.length === 0) throw new Error("manifest has no rows");
   for (const row of manifest.rows) {
     if (!Array.isArray(row) || row.length === 0) throw new Error("manifest has an empty row");
@@ -69,6 +72,7 @@ export async function describeKeys(keyboard, keycaps, addons, { model = DESCRIBE
     try {
       return { manifest: parseManifest(res.choices[0].message.content), usage: res.usage };
     } catch (err) {
+      if (err.code === "not_keyboard") throw err;
       lastError = err;
     }
   }
