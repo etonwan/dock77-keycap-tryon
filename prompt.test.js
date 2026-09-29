@@ -74,6 +74,20 @@ test("line breaks inside a legend are collapsed so the row stays on one line", (
   assert.match(rowLine(prompt, 1), /Esc→"Git Core"（黑色底，青色字）$/);
 });
 
+test("art beside a legend is listed on its own key without splitting the color group", () => {
+  const rows = [
+    [
+      ["Q", "Q", "米白色", "黑色"],
+      ["W", "W", "米白色", "黑色", "字母右侧一个红色\n爱心涂鸦"],
+      ["Shift", "Shift", "米灰色", "黑色", "向上箭头涂鸦"],
+    ],
+  ];
+  const prompt = buildPrompt({ bare: false, rows }, 0);
+  assert.match(rowLine(prompt, 1), /：Q、W［配图：字母右侧一个红色 爱心涂鸦］（米白色底，黑色字）；Shift［配图：向上箭头涂鸦］（米灰色底，黑色字）$/);
+  assert.match(prompt, /［配图：…］是字符之外还要画在这颗键帽上的图案/);
+  assert.match(prompt, /以"侧刻："开头的印在键帽朝前的侧壁上，不印在顶面/);
+});
+
 test("a kept artisan is listed as kept and never colored or merged into a group", () => {
   const row = rowLine(buildPrompt(manifest, 0), 1);
   assert.match(row, /；彩虹苹果艺术帽（原样保留）$/);

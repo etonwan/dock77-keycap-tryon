@@ -16,11 +16,14 @@ function sameStyle(a, b) {
 
 // A key prints its own name unless the kit prints something else there, which
 // is quoted: `Tab→"Tag"`. A blank legend (the space bar) is said outright.
-function renderKey([name, legend]) {
+// Art the kit draws beside the legend (doodles on a novelty kit) follows in
+// ［配图：…］; without it the painter printed plain letters.
+function renderKey([name, legend, , , art]) {
   const text = legend.replace(/\s+/g, " ").trim();
-  if (text === name) return name;
-  if (text === "") return `${name}（不印字）`;
-  return `${name}→"${text}"`;
+  const extra = art ? `［配图：${art.replace(/\s+/g, " ").trim()}］` : "";
+  if (text === name) return name + extra;
+  if (text === "") return `${name}（不印字）${extra}`;
+  return `${name}→"${text}"${extra}`;
 }
 
 // Consecutive keys with the same colors become one group, e.g.
@@ -84,7 +87,7 @@ export function buildPrompt(manifest, addonCount) {
 - 每一排的键数、每颗键的位置和宽度、键之间的空位。不增加、不删除、不移动任何键。${nav}${profile}
 - 清单里标"原样保留"的键。
 
-键位清单（图1共 ${rows.length} 排 ${total} 颗键；从上到下，每排从左到右，顿号隔开的是不同的键。引号里的字照印，一字不改，写着"××图标"的画对应的图标；没有引号的键印它自己的字符）：
+键位清单（图1共 ${rows.length} 排 ${total} 颗键；从上到下，每排从左到右，顿号隔开的是不同的键。引号里的字照印，一字不改，写着"××图标"的画对应的图标；没有引号的键印它自己的字符；［配图：…］是字符之外还要画在这颗键帽上的图案，照图2里同一颗键的样子画，风格、颜色和位置都照图2；以"侧刻："开头的印在键帽朝前的侧壁上，不印在顶面，侧壁在图1角度下看不到就不画）：
 ${rowLines}
 
 键帽的材质、表面质感和光泽与图2一致，只带上图1光线造成的自然明暗和反光。字符颜色照清单，浅色或低对比度的字也照样印，不要改成深色。
