@@ -1,6 +1,5 @@
 import { useId, useRef, useState, type DragEvent, type ReactNode } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import type { Preset } from "@/lib/try-on"
 import { cn } from "@/lib/utils"
 
 // An empty switch seen from above: housing plus the cross-shaped MX stem,
@@ -28,29 +27,6 @@ export function MenuSection({ title, children }: { title: string; children: Reac
         {title}
       </div>
       {children}
-    </div>
-  )
-}
-
-/** Ready-made images as a 3-column grid of named thumbnails. */
-export function PresetGrid({ items, onPick }: { items: Preset[]; onPick: (preset: Preset) => void }) {
-  return (
-    <div className="grid grid-cols-3 gap-2">
-      {items.map((preset) => (
-        <button
-          key={preset.name}
-          type="button"
-          onClick={() => onPick(preset)}
-          className="group/tile flex min-w-0 flex-col gap-1.5 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
-          <span className={cn(menuTile, "block")}>
-            <img src={preset.thumb} alt="" className="aspect-[3/2] w-full object-cover" />
-          </span>
-          <span className="truncate px-0.5 text-xs text-muted-foreground transition-colors duration-150 group-hover/tile:text-foreground">
-            {preset.name}
-          </span>
-        </button>
-      ))}
     </div>
   )
 }

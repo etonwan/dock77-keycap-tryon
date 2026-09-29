@@ -1,9 +1,9 @@
-import { useMemo, useRef, useState } from "react"
+import { useMemo, useState } from "react"
 import { Check, Search } from "lucide-react"
 import { menuTile } from "@/components/image-drop"
+import { LibraryCard, LibraryFooter, LibrarySheet } from "@/components/library-sheet"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet"
 import { Spinner } from "@/components/ui/spinner"
 import {
   BRANDS,
@@ -55,7 +55,6 @@ export function KeycapLibrary({ open, onOpenChange, onUse }: KeycapLibraryProps)
   const [color, setColor] = useState<ColorFamily | null>(null)
   const [year, setYear] = useState<number | null>(null)
   const [selection, setSelection] = useState<Selection | null>(null)
-  const drawer = useRef<HTMLDivElement>(null)
 
   const sets = library.status === "ready" ? library.sets : []
   const years = useMemo(() => [...new Set(sets.map((set) => set.year))].sort(), [sets])
@@ -96,41 +95,31 @@ export function KeycapLibrary({ open, onOpenChange, onUse }: KeycapLibraryProps)
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        ref={drawer}
-        // On touch screens, focusing the search field would pop up the
-        // on-screen keyboard over the sets, so focus the drawer itself.
-        initialFocus={() => (matchMedia("(pointer: coarse)").matches ? drawer.current : true)}
-        side="right"
-        className="w-full gap-0 border-0 bg-case p-0 shadow-[inset_1px_0_0_oklch(1_0_0/0.07),-24px_0_48px_-28px_oklch(0_0_0/0.9)] data-[side=right]:w-full sm:rounded-l-[20px] data-[side=right]:sm:max-w-3xl"
-      >
-        <header className="flex flex-col gap-3 px-5 pt-5 pb-4">
-          <div className="flex items-baseline gap-3 pr-10">
-            <SheetTitle className="text-base font-semibold tracking-tight">键帽库</SheetTitle>
-            <SheetDescription className="text-xs">
-              {brand.name}
-              {library.status === "ready" && ` · ${sets.length} 套`}
-            </SheetDescription>
+    <LibrarySheet
+      open={open}
+      onOpenChange={onOpenChange}
+      title="键帽库"
+      description={library.status === "ready" ? `${brand.name} · ${sets.length} 套` : brand.name}
+      header={
+        // Brand tabs appear once there is more than one brand.
+        BRANDS.length > 1 && (
+          <div className="flex gap-1">
+            {BRANDS.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                aria-pressed={item.id === brand.id}
+                onClick={() => switchBrand(item)}
+                className={cn(filterButton, "h-8 px-3")}
+              >
+                {item.name}
+              </button>
+            ))}
           </div>
-          {/* Brand tabs appear once there is more than one brand. */}
-          {BRANDS.length > 1 && (
-            <div className="flex gap-1">
-              {BRANDS.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  aria-pressed={item.id === brand.id}
-                  onClick={() => switchBrand(item)}
-                  className={cn(filterButton, "h-8 px-3")}
-                >
-                  {item.name}
-                </button>
-              ))}
-            </div>
-          )}
-        </header>
-
+        )
+      }
+      footer={<SelectionBar brand={brand} selection={selection} onChange={setSelection} onUse={use} />}
+    >
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:flex-row md:overflow-hidden">
           <aside className="flex shrink-0 flex-col gap-4 px-5 pb-4 md:w-48 md:overflow-y-auto md:pr-2">
             <div className="relative">
@@ -222,33 +211,14 @@ export function KeycapLibrary({ open, onOpenChange, onUse }: KeycapLibraryProps)
                     {shown.map((set) => {
                       const selected = selection?.set.id === set.id
                       return (
-                        <button
+                        <LibraryCard
                           key={set.id}
-                          type="button"
-                          aria-pressed={selected}
+                          src={`/keycaps/${brand.id}/thumbs/${set.bases[0]}.webp`}
+                          name={set.name}
+                          detail={set.year}
+                          selected={selected}
                           onClick={() => setSelection(selected ? null : select(set))}
-                          className="group/tile flex min-w-0 flex-col gap-1.5 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                        >
-                          <span
-                            className={cn(
-                              menuTile,
-                              "block",
-                              // Drawn outside the image: renders are mostly light, so an inner edge would vanish.
-                              selected && "outline-2 outline-offset-2 outline-primary",
-                            )}
-                          >
-                            <img
-                              src={`/keycaps/${brand.id}/thumbs/${set.bases[0]}.webp`}
-                              alt=""
-                              loading="lazy"
-                              className="aspect-[16/9] w-full object-cover"
-                            />
-                          </span>
-                          <span className="flex min-w-0 items-baseline gap-2 px-0.5">
-                            <span className={cn("truncate text-sm", selected ? "text-foreground" : "text-foreground/85")}>{set.name}</span>
-                            <span className="shrink-0 text-xs text-muted-foreground tabular-nums">{set.year}</span>
-                          </span>
-                        </button>
+                        />
                       )
                     })}
                   </div>
@@ -258,9 +228,7 @@ export function KeycapLibrary({ open, onOpenChange, onUse }: KeycapLibraryProps)
           </section>
         </div>
 
-        <SelectionBar brand={brand} selection={selection} onChange={setSelection} onUse={use} />
-      </SheetContent>
-    </Sheet>
+    </LibrarySheet>
   )
 }
 
@@ -287,53 +255,46 @@ function SelectionBar({
   }
 
   return (
-    <footer className="flex flex-col gap-3 bg-case px-5 py-4 shadow-[inset_0_1px_0_oklch(1_0_0/0.07)] sm:flex-row sm:items-end sm:gap-5 sm:rounded-bl-[20px]">
-      <div className="flex min-w-0 flex-1 flex-col gap-2.5">
-        {selection ? (
-          <>
-            <div className="min-w-0 truncate text-sm">
-              <span className="font-medium">{selection.set.name}</span>
-              <span className="text-muted-foreground">
-                {" · base kit"}
-                {selection.addons.length > 0 && ` + ${selection.addons.length} 个 add-on`}
-                {selection.set.addons.length > MAX_ADDONS && ` · add-on 最多 ${MAX_ADDONS} 张`}
-              </span>
-            </div>
-            <div className="-mx-5 flex gap-3 overflow-x-auto px-5 pt-1 pb-1">
-              {selection.set.bases.map((base, index) => (
+    <LibraryFooter hint="选一套键帽，它的 base kit 和 add-on 会一起放进上方的槽位。" action="使用这套" onAction={selection ? onUse : undefined}>
+      {selection && (
+        <>
+          <div className="min-w-0 truncate text-sm">
+            <span className="font-medium">{selection.set.name}</span>
+            <span className="text-muted-foreground">
+              {" · base kit"}
+              {selection.addons.length > 0 && ` + ${selection.addons.length} 个 add-on`}
+              {selection.set.addons.length > MAX_ADDONS && ` · add-on 最多 ${MAX_ADDONS} 张`}
+            </span>
+          </div>
+          <div className="-mx-5 flex gap-3 overflow-x-auto px-5 pt-1 pb-1">
+            {selection.set.bases.map((base, index) => (
+              <Thumb
+                key={base}
+                src={`/keycaps/${brand.id}/thumbs/${base}.webp`}
+                label={selection.set.bases.length > 1 ? `base kit ${index + 1}` : "base kit"}
+                on={selection.base === base}
+                // With one base kit there is nothing to choose.
+                onClick={selection.set.bases.length > 1 ? () => onChange({ ...selection, base }) : undefined}
+              />
+            ))}
+            {selection.set.addons.map((addon, index) => {
+              const on = selection.addons.includes(addon)
+              return (
                 <Thumb
-                  key={base}
-                  src={`/keycaps/${brand.id}/thumbs/${base}.webp`}
-                  label={selection.set.bases.length > 1 ? `base kit ${index + 1}` : "base kit"}
-                  on={selection.base === base}
-                  // With one base kit there is nothing to choose.
-                  onClick={selection.set.bases.length > 1 ? () => onChange({ ...selection, base }) : undefined}
+                  key={addon}
+                  src={`/keycaps/${brand.id}/thumbs/${addon}.webp`}
+                  label={`add-on ${index + 1}`}
+                  on={on}
+                  check
+                  disabled={!on && full}
+                  onClick={() => toggleAddon(addon)}
                 />
-              ))}
-              {selection.set.addons.map((addon, index) => {
-                const on = selection.addons.includes(addon)
-                return (
-                  <Thumb
-                    key={addon}
-                    src={`/keycaps/${brand.id}/thumbs/${addon}.webp`}
-                    label={`add-on ${index + 1}`}
-                    on={on}
-                    check
-                    disabled={!on && full}
-                    onClick={() => toggleAddon(addon)}
-                  />
-                )
-              })}
-            </div>
-          </>
-        ) : (
-          <p className="text-sm text-muted-foreground">选一套键帽，它的 base kit 和 add-on 会一起放进上方的槽位。</p>
-        )}
-      </div>
-      <Button className="h-11 shrink-0 px-5" disabled={!selection} onClick={onUse}>
-        使用这套
-      </Button>
-    </footer>
+              )
+            })}
+          </div>
+        </>
+      )}
+    </LibraryFooter>
   )
 }
 

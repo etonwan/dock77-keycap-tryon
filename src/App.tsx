@@ -1,6 +1,7 @@
 import { useEffect, useState, type ComponentProps } from "react"
-import { CornerDownLeft, Download, LibraryBig, Plus } from "lucide-react"
-import { ImageDrop, MenuAction, MenuSection, PresetGrid } from "@/components/image-drop"
+import { CornerDownLeft, Download, Keyboard, LibraryBig, Plus } from "lucide-react"
+import { ImageDrop, MenuAction, MenuSection } from "@/components/image-drop"
+import { KeyboardLibrary } from "@/components/keyboard-library"
 import { KeycapLibrary } from "@/components/keycap-library"
 import { KeyboardArt } from "@/components/keyboard-art"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -33,7 +34,8 @@ const LED = {
 // and the result get the rest of the page.
 export default function App() {
   const tryOn = useTryOn()
-  const [libraryOpen, setLibraryOpen] = useState(false)
+  const [keyboardLibraryOpen, setKeyboardLibraryOpen] = useState(false)
+  const [keycapLibraryOpen, setKeycapLibraryOpen] = useState(false)
   const { phase } = tryOn
   const running = phase.kind === "running"
   const addonStatus = tryOn.addonsTrimmed
@@ -49,12 +51,14 @@ export default function App() {
       status: tryOn.keyboard.length > 0 ? "点击更换" : "点击或拖入",
       menu: {
         sources: (close) => (
-          <MenuSection title={DOCK77.title}>
-            <PresetGrid
-              items={DOCK77.items}
-              onPick={(preset) => {
+          <MenuSection title="套件库">
+            <MenuAction
+              icon={<Keyboard className="size-6" strokeWidth={1.5} aria-hidden />}
+              title="打开 Dock77 配色库"
+              hint={`${DOCK77.items.length} 款配色，大图挑选`}
+              onClick={() => {
                 close()
-                tryOn.setKeyboard([preset])
+                setKeyboardLibraryOpen(true)
               }}
             />
           </MenuSection>
@@ -76,7 +80,7 @@ export default function App() {
               hint="按颜色、年份挑选，add-on 一起带上"
               onClick={() => {
                 close()
-                setLibraryOpen(true)
+                setKeycapLibraryOpen(true)
               }}
             />
           </MenuSection>
@@ -231,9 +235,10 @@ export default function App() {
         )}
       </main>
 
+      <KeyboardLibrary open={keyboardLibraryOpen} onOpenChange={setKeyboardLibraryOpen} onUse={(keyboard) => tryOn.setKeyboard([keyboard])} />
       <KeycapLibrary
-        open={libraryOpen}
-        onOpenChange={setLibraryOpen}
+        open={keycapLibraryOpen}
+        onOpenChange={setKeycapLibraryOpen}
         onUse={(base, addons) => {
           tryOn.setKeycaps([base])
           // The set's add-ons replace whatever add-ons were there before.
