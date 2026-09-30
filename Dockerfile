@@ -12,7 +12,7 @@ WORKDIR /app
 ENV NODE_ENV=production PORT=3000
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --no-audit --no-fund
-COPY server.js tryon.js describe.js image.js prompt.js ./
+COPY server.js tryon.js describe.js keysheet.js image.js prompt.js ./
 COPY --from=build /app/dist ./dist
 USER node
 EXPOSE 3000
