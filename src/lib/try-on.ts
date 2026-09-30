@@ -215,7 +215,7 @@ const WAITING_TIPS = [
 ]
 
 export const copy = {
-  eta: "全程约 1 分钟",
+  eta: "全程约 1-2 分钟",
   title: "键帽试衣间",
   keyboard: { label: "键盘/套件照片" },
   keycaps: { label: "键帽 base kit 图" },
