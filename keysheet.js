@@ -17,6 +17,13 @@ const SHEET_KEYS = [
   "Insert", "Space", "End", "A", "↓", "Win", "PgUp", "左 Shift", "Backspace", "`", "Fn", "左 Alt", "右 Shift",
   "F9", "左 Ctrl", "\\",
 ];
+// Novelty kits draw a different picture beside each alpha or number. The
+// painter needs to see those, so when the kit has them we cut out every alpha
+// and number too, in a scrambled order so they don't read as keyboard rows.
+const ART_KEYS = [
+  "K", "7", "Z", "W", "3", "P", "H", "0", "D", "X", "M", "5", "T", "B", "9", "G", "E", "2", "L", "V", "S",
+  "8", "N", "I", "4", "C", "F", "Y", "6", "R", "J", "O", "U",
+];
 // Fewer keys found than this means the render is not a normal kit layout (or
 // the answer is off), and the whole render is the safer reference.
 const MIN_KEYS = 15;
@@ -35,13 +42,16 @@ function instructions(width, height) {
 - 找不到的键不写。
 
 只输出一个 JSON 对象，不要加解释或代码块标记，键名用下面的名字，例如 {"Esc": [96, 124, 135, 164]}：
-${SHEET_KEYS.join("、")}`;
+${SHEET_KEYS.join("、")}
+
+另外，如果这套键帽的字母或数字键上除了字符还画了小图画、符号或涂鸦（只算画出来的图案，不算第二种文字，例如假名、韩文、俄文），把下面这些键也全部框出来，键名就用字母或数字；没有这类图案就不要写它们：
+${ART_KEYS.join("、")}`;
 }
 
 // Keeps boxes that are inside the image and plausibly one keycap.
 export function validBoxes(raw, width, height) {
   const boxes = {};
-  for (const name of SHEET_KEYS) {
+  for (const name of [...SHEET_KEYS, ...ART_KEYS]) {
     const box = raw?.[name];
     if (!Array.isArray(box) || box.length !== 4 || !box.every(Number.isFinite)) continue;
     const [l, t, r, b] = box.map(Math.round);
@@ -61,7 +71,7 @@ export function validBoxes(raw, width, height) {
 // sheet. `kit` is a prepared image; returns PNG bytes.
 export async function composeSheet(kit, boxes, background) {
   const tiles = [];
-  for (const name of SHEET_KEYS) {
+  for (const name of [...SHEET_KEYS, ...ART_KEYS]) {
     if (!boxes[name]) continue;
     const input = await sharp(kit.png)
       .extract(boxes[name])

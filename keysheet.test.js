@@ -26,6 +26,11 @@ test("boxes outside the image are clipped; odd or unknown ones are dropped", () 
   assert.deepEqual(validBoxes(null, 800, 600), {});
 });
 
+test("alphas and numbers boxed for their art are kept too", () => {
+  const boxes = validBoxes({ Q: [10, 10, 50, 50], J: [60, 10, 100, 50], "7": [110, 10, 150, 50] }, 800, 600);
+  assert.deepEqual(Object.keys(boxes).sort(), ["7", "J", "Q"]);
+});
+
 test("the sheet is portrait and holds a tile for each key", async () => {
   // A white render with one red "keycap".
   const png = await sharp({ create: { width: 400, height: 200, channels: 3, background: "#ffffff" } })

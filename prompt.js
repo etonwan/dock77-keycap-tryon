@@ -71,6 +71,10 @@ export function buildPrompt(manifest, addonCount, { sheet = false } = {}) {
   const total = rows.reduce((n, row) => n + row.length, 0);
   const rowLines = rows.map((row, i) => `第${i + 1}排（${row.length}颗）：${renderRow(row)}`).join("\n");
   const nav = navLine(rows);
+  // A sheet holds only some keys, so art on a key it lacks comes from the words.
+  const artSource = sheet
+    ? "样张里有同一颗键的，照样张里那颗画，风格、颜色和位置都照它；样张里没有的，按描述画"
+    : "照图2里同一颗键的样子画，风格、颜色和位置都照图2";
 
   const addonImages = Array.from({ length: addonCount }, (_, i) => `图${i + 3}`).join("、");
   const addonRole = addonCount === 0 ? "" : `\n- ${addonImages}是同一套键帽的增补套件，用法和图2一样。`;
@@ -94,7 +98,7 @@ export function buildPrompt(manifest, addonCount, { sheet = false } = {}) {
 - 每一排的键数、每颗键的位置和宽度、键之间的空位。不增加、不删除、不移动任何键。${nav}${profile}
 - 清单里标"原样保留"的键。
 
-键位清单（图1共 ${rows.length} 排 ${total} 颗键；从上到下，每排从左到右，顿号隔开的是不同的键。引号里的字照印，一字不改，写着"××图标"的画对应的图标；没有引号的键印它自己的字符；［配图：…］是字符之外还要画在这颗键帽上的图案，照图2里同一颗键的样子画，风格、颜色和位置都照图2；以"侧刻："开头的印在键帽朝前的侧壁上，不印在顶面，侧壁在图1角度下看不到就不画）：
+键位清单（图1共 ${rows.length} 排 ${total} 颗键；从上到下，每排从左到右，顿号隔开的是不同的键。引号里的字照印，一字不改，写着"××图标"的画对应的图标；没有引号的键印它自己的字符；［配图：…］是字符之外还要画在这颗键帽上的图案，${artSource}；以"侧刻："开头的印在键帽朝前的侧壁上，不印在顶面，侧壁在图1角度下看不到就不画）：
 ${rowLines}
 
 键帽的材质、表面质感和光泽与图2一致，只带上图1光线造成的自然明暗和反光。字符颜色照清单，浅色或低对比度的字也照样印，不要改成深色。

@@ -148,7 +148,11 @@ test("with a keycap sheet, image 2 is described as a sheet whose arrangement mea
   assert.match(sheet, /\n- 图2是这套键帽的样张：/);
   assert.match(sheet, /样张里键的排列和数量没有意义/);
   assert.doesNotMatch(sheet, /官方键位图/);
-  // Only the role line changes.
+  // Art is copied from the sheet when the key is on it, else painted from the words.
+  assert.match(kit, /照图2里同一颗键的样子画/);
+  assert.match(sheet, /样张里有同一颗键的，照样张里那颗画.*样张里没有的，按描述画/);
+  assert.doesNotMatch(sheet, /照图2里同一颗键/);
+  // The key list itself is the same.
   assert.equal(rowLine(sheet, 1), rowLine(kit, 1));
 });
 
