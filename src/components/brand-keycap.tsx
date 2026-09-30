@@ -1,6 +1,6 @@
 // Brand keycaps: a bone cap with a hanger legend (the fitting room, 试衣间,
 // for keycaps) and a graphite cap with the Overwrite Studio mark, like a
-// maker's novelty key. public/favicon.svg draws the hanger cap.
+// maker's novelty key. public/favicon.png shows the hanger cap.
 export function BrandKeycap() {
   const cap = "keycap grid size-9 place-items-center [--cap-depth:4px] [--cap-radius:8px]"
   return (
