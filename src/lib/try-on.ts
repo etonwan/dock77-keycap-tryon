@@ -222,7 +222,7 @@ export const copy = {
   addons: { label: "键帽 add-on kit 图", optional: "可选" },
   options: {
     title: "安装选项",
-    accents: { label: "用替换色键", hint: "套件附带的另一种颜色的 Esc、Enter、方向键等" },
+    accents: { label: "用替换色键", hint: "base kit 里另一种颜色的 Esc、Enter、方向键等" },
     novelties: { label: "用 novelty 键", hint: "把图案键装到 Esc、Enter、Shift 等修饰键上" },
   },
   download: "下载 PNG",

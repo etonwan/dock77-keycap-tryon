@@ -111,6 +111,16 @@ test("add-on images are numbered from 3, one per upload", () => {
   assert.doesNotMatch(three, /图6/);
 });
 
+test("add-on renders keep their own role in sheet mode: colors only, never their layout", () => {
+  const prompt = buildPrompt(manifest, 1, { sheet: true });
+  // Image 2 is a shuffled sheet, but image 3 is still a whole render with a grid.
+  assert.doesNotMatch(prompt, /用法和图2一样/);
+  assert.match(prompt, /图3是同一套键帽的增补套件的官方图.*不用来看键的位置和数量.*不要照它的排法/);
+  // A key that came from the add-on has its art on image 3, not on the sheet.
+  assert.match(prompt, /样张或增补套件图里有同一颗键的，照它画/);
+  assert.doesNotMatch(buildPrompt(manifest, 0, { sheet: true }), /增补套件图/);
+});
+
 test("a bare kit changes image 1's role and drops the keep-the-profile rule", () => {
   const dressed = buildPrompt(manifest, 0);
   assert.match(dressed, /图1是要编辑的照片。除了键帽，一切保持原样。/);
@@ -150,7 +160,7 @@ test("with a keycap sheet, image 2 is described as a sheet whose arrangement mea
   assert.doesNotMatch(sheet, /官方键位图/);
   // Art is copied from the sheet when the key is on it, else painted from the words.
   assert.match(kit, /照图2里同一颗键的样子画/);
-  assert.match(sheet, /样张里有同一颗键的，照样张里那颗画.*样张里没有的，按描述画/);
+  assert.match(sheet, /样张里有同一颗键的，照它画.*没有的，按描述画/);
   assert.doesNotMatch(sheet, /照图2里同一颗键/);
   // The key list itself is the same.
   assert.equal(rowLine(sheet, 1), rowLine(kit, 1));

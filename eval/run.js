@@ -7,6 +7,7 @@
 //   node eval/run.js two-step --out two-step-v2   # after a prompt change
 //   node eval/run.js two-step --model gpt-image-2.5-flare --out flare
 //   node eval/run.js pinned-nokit --case dock77-dark-serika --runs 20
+//   node eval/run.js two-step --case sparta-addon --novelties --out addon-nov
 //
 // Outputs go to eval/out/<out>/<case>-<i>.png (default <out> = variant) plus
 // a .json with timing, usage and (for two-step) the manifest and prompt.
@@ -51,9 +52,11 @@ async function paint(images, prompt, kb, manifest, options) {
 }
 
 // `options` is { model } for the image model; omitted means tryon.js's default.
+// Only two-step uses a case's add-on renders; the pinned variants paint from a
+// manifest and image 2 alone.
 const variants = {
   baseline: (kb, kit, options) => editImage([kb, kit], baselinePrompt(0), kb, options),
-  "two-step": (kb, kit, options) => renderTryOn(kb, kit, [], options),
+  "two-step": (kb, kit, options, name, addons) => renderTryOn(kb, kit, addons, options),
   pinned: (kb, kit, options, name) => {
     const manifest = pinnedManifest(name);
     return paint([kb, kit], buildPrompt(manifest, 0), kb, manifest, options);
@@ -78,16 +81,19 @@ const { positionals, values } = parseArgs({
     concurrency: { type: "string", default: "3" },
     out: { type: "string" },
     model: { type: "string" },
+    // The visitor's spare-key switches (describe.js); two-step only.
+    accents: { type: "boolean", default: false },
+    novelties: { type: "boolean", default: false },
   },
 });
 const [variant] = positionals;
 if (!variants[variant]) {
   console.error(
-    `usage: node eval/run.js <${Object.keys(variants).join("|")}> [--runs N] [--case name] [--concurrency N] [--out name] [--model id]`,
+    `usage: node eval/run.js <${Object.keys(variants).join("|")}> [--runs N] [--case name] [--concurrency N] [--out name] [--model id] [--accents] [--novelties]`,
   );
   process.exit(1);
 }
-const options = values.model ? { model: values.model } : {};
+const options = { ...(values.model ? { model: values.model } : {}), accents: values.accents, novelties: values.novelties };
 
 const cases = await loadCases(values.case);
 const dir = path.join(outDir, values.out ?? variant);
@@ -102,7 +108,7 @@ await inBatches(jobs, Number(values.concurrency), async ({ c, i }) => {
   }
   const started = Date.now();
   try {
-    const { png, manifest, prompt, usage, describeUsage, sheetKeys } = await variants[variant](c.keyboard, c.kit, options, c.name);
+    const { png, manifest, prompt, usage, describeUsage, sheetKeys } = await variants[variant](c.keyboard, c.kit, options, c.name, c.addons);
     const seconds = Math.round((Date.now() - started) / 1000);
     writeFileSync(`${stem}.png`, png);
     writeFileSync(`${stem}.json`, JSON.stringify({ ...options, seconds, sheetKeys, usage, describeUsage, manifest, prompt }, null, 1));

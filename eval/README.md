@@ -15,6 +15,10 @@
 | `dock77-ice-nautilus` | Dock77 冰蓝渲染图（已装浅色键帽，Esc/Enter 深灰） | GMK Nautilus R2 Core（青蓝字母、藏青修饰键、黄 Esc/Enter） | 主路径：预设键盘 + GMK 库 |
 | `dracula` | 用户找的 75% 渲染图 | GMK Dracula v2 Git Core | 用户自己上传照片 |
 | `sparta` | 用户拍的 75% 键盘照片 | GMK Sparta | 用户自己上传照片 |
+| `sparta-addon` | 同 sparta | GMK Sparta + 它的 novelty add-on（`addon1.webp`，26 颗主题图标键的展示网格） | 从 GMK 库选套件时默认带上 add-on |
+| `tribal` | Dock77 深灰渲染图 | GMK Tribal（每颗字母、数字旁有不同的部落符号） | 字母上有图案的 novelty 套件 |
+
+case 目录里的 `addon1.*`、`addon2.*`…（按文件名排序）作为 add-on kit 传给 `two-step`；pinned 变体不用它们。
 
 Dock77 两张图的配列：每排 13/16/16/15/13/9；右侧两列导航键 Home/PgUp、End/PgDn、Insert/Delete，Insert/Delete 在 Enter 那一排；↑ 在右 Shift 右边，Delete 下方是空位。
 
@@ -258,3 +262,38 @@ F 看起来略好，于是在最难的 dock77-dark-serika 上加跑 10 次对照
 - 耗时：Tribal 这套三组都慢（约 160s），修复版中位数高，平均只多约 8s，10 张样本分不清。
 - 没有重跑其他 4 个 case；那几套不会触发额外的字母数字，样张不变，只有 prompt 里图案那句措辞不同。
 - 输出：`eval/out/tribal-pre`、`tribal-prod`、`tribal-fix`。
+
+## 2026-09-30 清单去掉常规符号、add-on 单独说明
+
+两处改动，同一轮验证：
+
+- `describe.js`：配图那条加了"键名自带的常规符号不算配图"（Backspace 的箭头、Tab 的双向箭头、Shift 的上箭头、Enter 的折返箭头、Win 的 logo），只印这种符号没有词的键，要印的字写键名本身。改前 Serika 的清单里 Backspace、Tab、两个 Shift、Enter 每颗都挂一段 `［配图：文字左侧有黑色向左箭头］`，Tribal 的 Backspace 要印的字被写成 "左箭头"（会被当文字印上去）。改后 dark-serika、dracula、sparta 共 15 份清单里没有一颗修饰键带配图，Tribal 36 颗字母数字的图案照旧记录、Backspace 写回 "Backspace"。
+- `prompt.js`：add-on 的角色说明从"用法和图2一样"改成单独一句：官方图，只看清单点到的那几颗的颜色、字符、材质，不看位置和数量、不照它的排法。原因是图2 已换成打乱的样张，add-on 仍是整张带网格的渲染图，"和图2一样"说不通，而且整张渲染图正是之前让模型照搬排法的东西。配图那句也相应改成"样张或增补套件图里有同一颗键的，照它画"。
+- 新 case `sparta-addon`（sparta 键盘 + Sparta base + GMK 库里它的 novelty add-on），`eval/cases.js` 支持 `addon*.*`；`eval/grade.js` 原来按前缀匹配文件名，`sparta` 会把 `sparta-addon-*` 也算进去，已改成精确匹配。
+
+`node eval/run.js two-step --runs 5 --concurrency 5 --out legend-fix`（sparta-addon 补到 10 张），45 张全部生成成功。
+
+| case | full pass | 对照（`e2e-new`，10 张） | 平均耗时 |
+|---|---|---|---|
+| dock77-dark-serika | 3/5 | 7/10 | 149s |
+| dock77-ice-nautilus | 4/5 | 9/10 | 117s |
+| dracula | 5/5 | 9/10 | 113s |
+| sparta | 3/5 | 7/10 | 95s |
+| **原 4 case 合计** | **15/20 (75%)** | 32/40 (80%) | |
+| sparta-addon | 7/10 | — | 115s |
+| tribal | 1/5 | 1/10（`tribal-fix`） | 162s |
+
+- 原 4 case 的失败：dark-serika 导航区少 2 颗 1 张、F 排多 1 颗 1 张；ice-nautilus F12 右边多一颗 Home 1 张；sparta 机身 S 标志消失 2 张。都是以前出现过的类型，和修饰键字符无关；修饰键颜色检查（dock77 #5、#6）10/10。5 张样本分不出和 80% 的差距，按 README 前面的结论当作没有退步。dark-serika 以前 2/10 的"Backspace 画成米白"这轮 0/5，样本太少，不能说修好了。
+- sparta-addon：#12（没有照搬 add-on 网格、没有多出键）10/10，rows 9/10；描述模型 10 次都没有把 novelty 图标分配给任何键（清单和 sparta 一样），但生图模型有 2 张自己把地球键画成了 add-on 里的 Λ 盾徽而不是清单写的地球图标。地球键也是修饰键位，#11 原来漏列了它，已补上并重评。剩下的失败是字母字色偏深、艺术帽画得不像、透视略变各 1 张，和 add-on 无关。评分模型对同一张图两次评分会翻转（-1、-5），和以前一样。
+- 这套 add-on 是 novelty 网格，不是 Mac 修饰键套件；GMK 库里 Dracula 的四张"add-on"有两张其实是替换用的完整 base，没拿来当 case。Mac 修饰键 add-on 的路径还没有 case。
+- 输出：`eval/out/legend-fix`。
+
+## 2026-09-30 novelty 开关打开 + add-on
+
+合入 `f741279`（替换色键 / novelty 开关）后，`eval/run.js` 加了 `--accents`、`--novelties`（只对 two-step 有效）。用 sparta-addon 开着 novelty 跑 10 张：`node eval/run.js two-step --case sparta-addon --novelties --runs 10 --concurrency 5 --out addon-nov`。
+
+- 描述模型 10 次都给出同一套分配：Esc→斯巴达头盔、Enter→ΣΠΑΡΤΗ（3 次是短剑）、Ctrl→圆盾、Alt→Λ、Win→头盔，地球键保持地球图标，字母、数字、F 键不动。
+- 生图模型 10 张都照清单画到了对应的键上，#11（图标只在修饰键上）、#12（没有照搬 add-on 网格、没多键）、#10 和每排键数都是 10/10。
+- #1、#2 全部"失败"是检查项不适用：它们写的是 base kit 的金棕底 Esc/Enter，而开关打开后模型选了 add-on 里酒红底金字的头盔 Esc 和 ΣΠΑΡΤΗ Enter（add-on 两种配色都有，规则是"Esc 和 Enter 优先用最显眼的"）。这个 case 的 checks 按开关关闭写，开着跑时忽略 #1、#2。
+- 平均耗时 135s，比关闭时（115s）多约 20s，10 张样本分不清。
+- 输出：`eval/out/addon-nov`。

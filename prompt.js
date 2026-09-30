@@ -71,13 +71,18 @@ export function buildPrompt(manifest, addonCount, { sheet = false } = {}) {
   const total = rows.reduce((n, row) => n + row.length, 0);
   const rowLines = rows.map((row, i) => `第${i + 1}排（${row.length}颗）：${renderRow(row)}`).join("\n");
   const nav = navLine(rows);
+  const addonImages = Array.from({ length: addonCount }, (_, i) => `图${i + 3}`).join("、");
+  // Add-on renders are whole kit images with their own grid, whether or not
+  // image 2 is a sheet, so they get their own role instead of "same as 图2".
+  const addonRole =
+    addonCount === 0
+      ? ""
+      : `\n- ${addonImages}是同一套键帽的增补套件的官方图，只用来看清单里用到的那几颗键的底色、字符、字符颜色和材质，不用来看键的位置和数量。里面的键只有清单点到的才画，其余不要画，也不要照它的排法。`;
+
   // A sheet holds only some keys, so art on a key it lacks comes from the words.
   const artSource = sheet
-    ? "样张里有同一颗键的，照样张里那颗画，风格、颜色和位置都照它；样张里没有的，按描述画"
+    ? `样张${addonCount === 0 ? "" : "或增补套件图"}里有同一颗键的，照它画，风格、颜色和位置都照它；没有的，按描述画`
     : "照图2里同一颗键的样子画，风格、颜色和位置都照图2";
-
-  const addonImages = Array.from({ length: addonCount }, (_, i) => `图${i + 3}`).join("、");
-  const addonRole = addonCount === 0 ? "" : `\n- ${addonImages}是同一套键帽的增补套件，用法和图2一样。`;
 
   const subject = bare
     ? "图1是没装键帽的键盘套件（只有轴体或定位板）。按轴位和定位板开孔给每个轴位装上一颗键帽，键帽的高度和轮廓参考图2。"

@@ -11,18 +11,23 @@ function findFile(dir, stem) {
   return path.join(dir, name);
 }
 
-// Each case is a folder under eval/cases with keyboard.*, kit.* and
-// expected.json ({ note, rows: [counts per row], checks: [sentences] }).
+// Each case is a folder under eval/cases with keyboard.*, kit.*, optional
+// add-on kit renders addon1.*, addon2.*, … (sorted by name) and expected.json
+// ({ note, rows: [counts per row], checks: [sentences] }).
 export async function loadCases(only) {
   const names = readdirSync(casesDir).filter((name) => !only || name === only);
   if (names.length === 0) throw new Error(`no case named ${only}`);
   return Promise.all(
     names.sort().map(async (name) => {
       const dir = path.join(casesDir, name);
+      const addonFiles = readdirSync(dir)
+        .filter((file) => /^addon\d*\./.test(file))
+        .sort();
       return {
         name,
         keyboard: await prepareImage(readFileSync(findFile(dir, "keyboard"))),
         kit: await prepareImage(readFileSync(findFile(dir, "kit"))),
+        addons: await Promise.all(addonFiles.map((file) => prepareImage(readFileSync(path.join(dir, file))))),
         expected: JSON.parse(readFileSync(path.join(dir, "expected.json"), "utf8")),
       };
     }),

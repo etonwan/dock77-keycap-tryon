@@ -81,9 +81,11 @@ function summarize(c, g) {
 }
 
 const cases = await loadCases(values.case);
+// Exact `<case>-<n>.png`: a prefix match would also give `sparta` the
+// `sparta-addon-*` images.
 const runs = cases.flatMap((c) =>
   readdirSync(dir)
-    .filter((file) => file.startsWith(`${c.name}-`) && file.endsWith(".png"))
+    .filter((file) => new RegExp(`^${c.name}-\\d+\\.png$`).test(file))
     .sort()
     .map((file) => ({ c, stem: path.join(dir, path.parse(file).name) })),
 );
