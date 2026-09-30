@@ -139,6 +139,19 @@ test("nav keys are spelled out row by row", () => {
   assert.doesNotMatch(buildPrompt(manifest, 0), /导航键共/);
 });
 
+test("with a keycap sheet, image 2 is described as a sheet whose arrangement means nothing", () => {
+  const kit = buildPrompt(manifest, 0);
+  assert.match(kit, /图2是这套键帽的官方键位图/);
+  assert.doesNotMatch(kit, /样张/);
+
+  const sheet = buildPrompt(manifest, 0, { sheet: true });
+  assert.match(sheet, /\n- 图2是这套键帽的样张：/);
+  assert.match(sheet, /样张里键的排列和数量没有意义/);
+  assert.doesNotMatch(sheet, /官方键位图/);
+  // Only the role line changes.
+  assert.equal(rowLine(sheet, 1), rowLine(kit, 1));
+});
+
 test("the closing rule stays last", () => {
   assert.match(buildPrompt(manifest, 2), /不要加清单以外的键、文字或水印。$/);
 });

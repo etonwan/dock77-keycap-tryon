@@ -1,6 +1,8 @@
 import OpenAI, { toFile } from "openai";
+import sharp from "sharp";
 import { describeKeys } from "./describe.js";
 import { outputSize } from "./image.js";
+import { buildKeySheet } from "./keysheet.js";
 import { buildPrompt } from "./prompt.js";
 
 // GPT Image 2.5 Flare. We want the photo kept as-is and only the keycaps changed.
@@ -20,19 +22,23 @@ export async function editImage(images, prompt, keyboard, { model = MODEL } = {}
     size: `${width}x${height}`,
     quality: QUALITY,
   });
-  return { png: Buffer.from(result.data[0].b64_json, "base64"), width, height, usage: result.usage };
+  // The model returns a smaller image than asked for (about 1680 px long edge
+  // for a 2048x1152 request), so report the size of what came back.
+  const png = Buffer.from(result.data[0].b64_json, "base64");
+  const actual = await sharp(png).metadata();
+  return { png, width: actual.width, height: actual.height, usage: result.usage };
 }
 
-// The whole try-on: read the keys (describe.js), write the prompt (prompt.js),
-// paint (editImage). Inputs are prepared images from image.js. `options` only
-// exists so eval/run.js can A/B image models.
+// The whole try-on: read the keys (describe.js) while cutting the kit render
+// into a keycap sheet (keysheet.js, shorter, so it adds no wait), write the
+// prompt (prompt.js), paint (editImage). Inputs are prepared images from
+// image.js. `options` only exists so eval/run.js can A/B image models.
 export async function renderTryOn(keyboard, keycaps, addons, options = {}) {
-  const { manifest, usage: describeUsage } = await describeKeys(
-    keyboard.png,
-    keycaps.png,
-    addons.map((addon) => addon.png),
-  );
-  const prompt = buildPrompt(manifest, addons.length);
-  const image = await editImage([keyboard, keycaps, ...addons], prompt, keyboard, options);
-  return { ...image, manifest, prompt, describeUsage };
+  const [{ manifest, usage: describeUsage }, sheet] = await Promise.all([
+    describeKeys(keyboard.png, keycaps.png, addons.map((addon) => addon.png)),
+    buildKeySheet(keycaps),
+  ]);
+  const prompt = buildPrompt(manifest, addons.length, { sheet: sheet !== null });
+  const image = await editImage([keyboard, sheet ?? keycaps, ...addons], prompt, keyboard, options);
+  return { ...image, manifest, prompt, describeUsage, sheetKeys: sheet?.found ?? 0, sheetUsage: sheet?.usage };
 }

@@ -8,7 +8,7 @@ const DESCRIBE_MODEL = "gpt-6-astra";
 
 // This stage can go through a separate OpenAI-compatible endpoint (e.g. a CPA
 // proxy) while image generation stays on OpenAI. Unset falls back to OPENAI_*.
-const openai = new OpenAI({
+export const openai = new OpenAI({
   apiKey: process.env.VISION_API_KEY || undefined,
   baseURL: process.env.VISION_BASE_URL || undefined,
 });
@@ -48,7 +48,7 @@ function instructions(addonCount) {
 - 颜色用简短的中文，例如 米白色、酒红色、金棕色、黑色、蓝灰色、青色、粉色。同一套件里同一种颜色始终用同一个词。`;
 }
 
-function dataUrl(png) {
+export function dataUrl(png) {
   return { type: "image_url", image_url: { url: `data:image/png;base64,${png.toString("base64")}`, detail: "high" } };
 }
 

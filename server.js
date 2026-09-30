@@ -32,11 +32,11 @@ function describeError(err) {
 async function generate(id, keyboard, keycaps, addons) {
   const started = Date.now();
   try {
-    const { png, width, height, usage, describeUsage } = await renderTryOn(keyboard, keycaps, addons);
+    const { png, width, height, usage, describeUsage, sheetKeys } = await renderTryOn(keyboard, keycaps, addons);
     const seconds = Math.round((Date.now() - started) / 1000);
     jobs.set(id, { status: "done", png, width, height, seconds });
     console.log(
-      `job ${id} done: ${width}x${height} in ${seconds}s, usage ${JSON.stringify(usage)}, describe usage ${JSON.stringify(describeUsage)}`,
+      `job ${id} done: ${width}x${height} in ${seconds}s, key sheet ${sheetKeys || "not used"}, usage ${JSON.stringify(usage)}, describe usage ${JSON.stringify(describeUsage)}`,
     );
   } catch (err) {
     console.error(`job ${id} failed:`, err);

@@ -59,7 +59,14 @@ function navLine(rows) {
   return `\n- 右侧导航键共 ${count} 颗：${parts.join("；")}。每颗都要画，位置照图1，不按图2的排法。`;
 }
 
-export function buildPrompt(manifest, addonCount) {
+// Image 2 is either the kit render or, normally, a sheet of keycaps cut out of
+// it (keysheet.js).
+const KIT_ROLE =
+  "图2是这套键帽的官方键位图，只用来看键帽的底色、字符、字符颜色和材质，不用来看键的位置。它按全尺寸排版，排法可能和图1不同：图2比图1多出来的键（小键盘等）不要画；图1上有的键一颗也不能少，位置照图1。";
+const SHEET_ROLE =
+  "图2是这套键帽的样张：从官方图上把一部分键帽单独剪下来、打乱顺序摆在一起，只用来看底色、字符样式、字符颜色和材质。样张里键的排列和数量没有意义，不要照它排；键的位置和数量只照图1和下面的清单。样张里没有的键，颜色照清单，字符样式照同类的键。";
+
+export function buildPrompt(manifest, addonCount, { sheet = false } = {}) {
   const { bare, rows } = manifest;
   const total = rows.reduce((n, row) => n + row.length, 0);
   const rowLines = rows.map((row, i) => `第${i + 1}排（${row.length}颗）：${renderRow(row)}`).join("\n");
@@ -77,7 +84,7 @@ export function buildPrompt(manifest, addonCount) {
 
 图片角色：
 - ${subject}
-- 图2是这套键帽的官方键位图，只用来看键帽的底色、字符、字符颜色和材质，不用来看键的位置。它按全尺寸排版，排法可能和图1不同：图2比图1多出来的键（小键盘等）不要画；图1上有的键一颗也不能少，位置照图1。${addonRole}
+- ${sheet ? SHEET_ROLE : KIT_ROLE}${addonRole}
 
 只改：每颗键帽的底色、字符、字符颜色和材质，按下面的清单逐颗换。
 
