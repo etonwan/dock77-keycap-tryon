@@ -47,6 +47,11 @@ export function formatElapsed(seconds: number) {
 // Must match MAX_ADDONS in server.js.
 export const MAX_ADDONS = 4
 
+/** Whether to use the kit's spare keys: accent-colored duplicates of Esc,
+ *  Enter, arrows and the like, and novelties (pictures instead of key names).
+ *  Sent to the server as form fields of the same names. */
+export type Options = { accents: boolean; novelties: boolean }
+
 /** A ready-made image the visitor can pick instead of uploading their own. */
 export type Preset = { name: string; src: string; thumb: string }
 
@@ -100,6 +105,9 @@ export function useTryOn() {
   const [keycaps, setKeycaps] = useState<(File | Preset)[]>([])
   const [addons, setAddons] = useState<(File | Preset)[]>([])
   const [addonsTrimmed, setAddonsTrimmed] = useState(false)
+  // The kit's spare keys are the buyer's choice, so both start off: the
+  // official main layout only. Kept across 重置, like a preference.
+  const [options, setOptions] = useState<Options>({ accents: false, novelties: false })
   const [phase, setPhase] = useState<Phase>({ kind: "idle" })
   const keyboardUrls = usePreviewUrls(keyboard)
   const keycapsUrls = usePreviewUrls(keycaps)
@@ -145,6 +153,8 @@ export function useTryOn() {
       body.append("keyboard", await asFile(keyboard[0]))
       body.append("keycaps", await asFile(keycaps[0]))
       for (const addon of await Promise.all(addons.map(asFile))) body.append("addons[]", addon)
+      if (options.accents) body.append("accents", "1")
+      if (options.novelties) body.append("novelties", "1")
       const response = await fetch("/api/jobs", { method: "POST", body })
       const created = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(created.error ?? "上传失败，请重试。")
@@ -174,6 +184,8 @@ export function useTryOn() {
     setKeycaps,
     pickAddons,
     clearAddons,
+    options,
+    setOptions,
     phase,
     elapsed,
     canGenerate,
@@ -208,6 +220,11 @@ export const copy = {
   keyboard: { label: "键盘/套件照片" },
   keycaps: { label: "键帽 base kit 图" },
   addons: { label: "键帽 add-on kit 图", optional: "可选" },
+  options: {
+    title: "安装选项",
+    accents: { label: "用替换色键", hint: "套件附带的另一种颜色的 Esc、Enter、方向键等" },
+    novelties: { label: "用 novelty 键", hint: "把图案键装到 Esc、Enter、Shift 等修饰键上" },
+  },
   download: "下载 PNG",
   buttonLabel(phase: Phase) {
     if (phase.kind === "running") return "安装中…"

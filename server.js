@@ -29,14 +29,14 @@ function describeError(err) {
   return "生成失败，请稍后再试。";
 }
 
-async function generate(id, keyboard, keycaps, addons) {
+async function generate(id, keyboard, keycaps, addons, options) {
   const started = Date.now();
   try {
-    const { png, width, height, usage, describeUsage, sheetKeys } = await renderTryOn(keyboard, keycaps, addons);
+    const { png, width, height, usage, describeUsage, sheetKeys } = await renderTryOn(keyboard, keycaps, addons, options);
     const seconds = Math.round((Date.now() - started) / 1000);
     jobs.set(id, { status: "done", png, width, height, seconds });
     console.log(
-      `job ${id} done: ${width}x${height} in ${seconds}s, key sheet ${sheetKeys || "not used"}, usage ${JSON.stringify(usage)}, describe usage ${JSON.stringify(describeUsage)}`,
+      `job ${id} done: ${width}x${height} in ${seconds}s, options ${JSON.stringify(options)}, key sheet ${sheetKeys || "not used"}, usage ${JSON.stringify(usage)}, describe usage ${JSON.stringify(describeUsage)}`,
     );
   } catch (err) {
     console.error(`job ${id} failed:`, err);
@@ -113,6 +113,8 @@ app.post(
     if (addons.length > MAX_ADDONS) {
       return c.json({ error: `add-on kit 图最多 ${MAX_ADDONS} 张。` }, 400);
     }
+    // The visitor's choices about the kit's spare keys; "1" means on.
+    const options = { accents: body.accents === "1", novelties: body.novelties === "1" };
     let prepared;
     try {
       prepared = await Promise.all(
@@ -128,7 +130,7 @@ app.post(
     recentJobsByIp.get(ip).push(Date.now());
     const id = randomUUID();
     jobs.set(id, { status: "running" });
-    generate(id, keyboard, keycaps, preparedAddons);
+    generate(id, keyboard, keycaps, preparedAddons, options);
     return c.json({ id }, 202);
   },
 );

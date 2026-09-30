@@ -7,6 +7,7 @@ import { KeycapLibrary } from "@/components/keycap-library"
 import { KeyboardArt } from "@/components/keyboard-art"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { Switch } from "@/components/ui/switch"
 import { BRANDS } from "@/lib/keycap-library"
 import { copy, DOCK77, formatElapsed, MAX_ADDONS, useTryOn } from "@/lib/try-on"
 import { cn } from "@/lib/utils"
@@ -179,6 +180,24 @@ export default function App() {
               {copy.buttonLabel(phase)}
             </Button>
           </div>
+        </div>
+        {/* DIP switches under the slots: which of the kit's spare keys to install. */}
+        <div className="mt-4 flex flex-wrap items-start gap-x-6 gap-y-3 border-t border-border pt-4">
+          <span className="text-xs text-muted-foreground xl:leading-6">{copy.options.title}</span>
+          {(["accents", "novelties"] as const).map((name) => (
+            <label key={name} className="flex cursor-pointer items-start gap-2.5">
+              <Switch
+                checked={tryOn.options[name]}
+                onCheckedChange={(checked) => tryOn.setOptions({ ...tryOn.options, [name]: checked })}
+                disabled={running}
+                className="mt-[3px]"
+              />
+              <span className="flex flex-col gap-0.5 leading-tight">
+                <span className="text-sm font-medium">{copy.options[name].label}</span>
+                <span className="text-xs text-muted-foreground">{copy.options[name].hint}</span>
+              </span>
+            </label>
+          ))}
         </div>
       </header>
 

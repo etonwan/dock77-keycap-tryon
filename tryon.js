@@ -32,11 +32,13 @@ export async function editImage(images, prompt, keyboard, { model = MODEL } = {}
 // The whole try-on: read the keys (describe.js) while cutting the kit render
 // into a keycap sheet (keysheet.js, shorter, so it adds no wait), write the
 // prompt (prompt.js), paint (editImage). Inputs are prepared images from
-// image.js. `options` only exists so eval/run.js can A/B image models.
-export async function renderTryOn(keyboard, keycaps, addons, options = {}) {
+// image.js. `accents` and `novelties` are the visitor's choices about the
+// kit's spare keys (describe.js); `model` only exists so eval/run.js can A/B
+// image models.
+export async function renderTryOn(keyboard, keycaps, addons, { accents = false, novelties = false, ...options } = {}) {
   const [{ manifest, usage: describeUsage }, sheet] = await Promise.all([
-    describeKeys(keyboard.png, keycaps.png, addons.map((addon) => addon.png)),
-    buildKeySheet(keycaps),
+    describeKeys(keyboard.png, keycaps.png, addons.map((addon) => addon.png), { accents, novelties }),
+    buildKeySheet(keycaps, { accents }),
   ]);
   const prompt = buildPrompt(manifest, addons.length, { sheet: sheet !== null });
   const image = await editImage([keyboard, sheet ?? keycaps, ...addons], prompt, keyboard, options);

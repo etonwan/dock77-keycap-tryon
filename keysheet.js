@@ -35,9 +35,15 @@ const SHEET_WIDTH = 900;
 // took the sheet's framing and zoomed the keyboard, cropping its lower corner.
 const MIN_SHEET_HEIGHT = 1200;
 
-function instructions(width, height) {
+// With `accents`, a key that the render also offers in an accent color (in
+// the spare-key area beside or below the main layout) is cut from there, so
+// the painter sees the colors describe.js picked with the same option.
+function instructions(width, height, { accents = false } = {}) {
+  const which = accents
+    ? "图里另有补充键区（额外尺寸、替换色键）的：补充键区里有这颗键的替换色版本（键名或功能相同，底色和主排版那颗不同）就用补充键区那颗，否则用主排版里的那颗。"
+    : "用主排版里的那颗；图里另有补充键区（额外尺寸、替换键）的，不要用补充键区里的。";
   return `这是一套键帽的官方键位图，尺寸 ${width}×${height} 像素。按功能找出下面每颗键在图里的位置，给出键帽外轮廓的像素框 [左, 上, 右, 下]。
-- 用主排版里的那颗；图里另有补充键区（额外尺寸、替换键）的，不要用补充键区里的。
+- ${which}
 - 修饰键按位置找：Esc 是 F 排最左，Backspace 是数字排最右，Tab 是 Q 排最左，Caps Lock 和 Enter 是 A 排两头，两个 Shift 是 Z 排两头，Ctrl、Win、Alt、Fn 在空格排，它们可能印着别的词或图标。
 - 找不到的键不写。
 
@@ -108,11 +114,11 @@ async function backgroundOf(kit) {
 
 // `kit` is a prepared image. Returns the sheet as a prepared image, or null
 // when the keys could not be found; the caller then uses the whole render.
-export async function buildKeySheet(kit, { model = describeModel } = {}) {
+export async function buildKeySheet(kit, { model = describeModel, accents } = {}) {
   try {
     const res = await openai.chat.completions.create({
       model,
-      messages: [{ role: "user", content: [dataUrl(kit.png), { type: "text", text: instructions(kit.width, kit.height) }] }],
+      messages: [{ role: "user", content: [dataUrl(kit.png), { type: "text", text: instructions(kit.width, kit.height, { accents }) }] }],
     });
     const text = res.choices[0].message.content.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
     const boxes = validBoxes(JSON.parse(text), kit.width, kit.height);

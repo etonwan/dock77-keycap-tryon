@@ -13,14 +13,30 @@ export const openai = new OpenAI({
   baseURL: process.env.VISION_BASE_URL || undefined,
 });
 
-function instructions(addonCount) {
+// A kit render has a main layout plus, below or beside it, spare keys: the
+// same key in an accent color (a purple Esc, Enter or arrows next to the
+// black ones) and novelties that print a picture instead of a key name. Both
+// are the buyer's choice, so they are opt-in.
+function instructions(addonCount, { accents = false, novelties = false } = {}) {
   const addons =
     addonCount === 0
       ? ""
       : `
 图3${addonCount > 1 ? `到图${addonCount + 2}` : ""}是同一套键帽的增补套件（例如 Mac 修饰键、特殊尺寸键、novelties）。图1里的某颗键，如果增补套件里有功能和尺寸都对应的版本（例如 Mac 的 command、option），用增补套件里那颗的字符和颜色，否则用图2的。增补套件里对不上图1任何一颗键的键帽不要用。`;
+  const accentRule = accents
+    ? `
+- 替换色键：图2主排版之外的补充键区里，如果有某颗键的替换色版本（同一个键名或同样的功能，底色和主排版那颗不同，常见于 Esc、Enter、方向键、Shift、Backspace），用替换色那颗的底色和字符颜色，不用主排版的。没有替换色版本的键照常用主排版。`
+    : `
+- 只用图2主排版里的键。补充键区（主排版之外的替换色键、额外尺寸键）不要用。`;
+  const noveltyRule = novelties
+    ? `
+- novelty 键：图2补充键区${addonCount > 0 ? "和增补套件" : ""}里印图案、不印键名的键帽（鬼脸、标志、主题词等），换到图1的修饰键上：按尺寸和排数找对应的键（1u 的 R1 给 Esc，2.25u 的 R3 给 Enter，2u 的 R1 给 Backspace，1.5u 的 R2 给 Tab，1.75u 的 R3 给 Caps Lock，2.25u 和 2.75u 的 R4 给两个 Shift，1.25u 的 R4 给 Ctrl、Win、Alt、Fn）。每颗 novelty 只用一次；同一尺寸有多颗时任选，但 Esc 和 Enter 优先用最显眼的${accents ? "（有替换色版本的用替换色版本）" : "（替换色版本不用）"}。换上 novelty 的键：要印的字写它印的词，只有图案没有词就写图案的名字（例如 "鬼脸图标"），图案的样子和颜色写在第五项配图里。字母、数字、F 区、导航键、方向键不换 novelty。`
+    : `
+- 印图案、不印键名的 novelty 键帽不要用，修饰键照图2主排版。`;
 
   return `图1是一把机械键盘的照片，图2是一套键帽的官方键位图（base kit 渲染图）。${addons}
+
+可选项（按下面两条执行）：${accentRule}${noveltyRule}
 
 任务：列出图1上每一颗键，并为每颗键写出换上这套键帽后它应该是什么样子。结果会交给一个图像模型去画，所以每颗键都要写清楚。
 
@@ -69,8 +85,10 @@ function parseManifest(text) {
 
 // keyboard, keycaps and addons are prepared PNG buffers. Returns the manifest
 // used by buildPrompt: { bare, rows: [[[name, legend, base, legendColor], ...]] }.
-export async function describeKeys(keyboard, keycaps, addons, { model = DESCRIBE_MODEL } = {}) {
-  const content = [dataUrl(keyboard), dataUrl(keycaps), ...addons.map(dataUrl), { type: "text", text: instructions(addons.length) }];
+// `accents` and `novelties` are the visitor's choices (see instructions).
+export async function describeKeys(keyboard, keycaps, addons, { model = DESCRIBE_MODEL, accents, novelties } = {}) {
+  const text = instructions(addons.length, { accents, novelties });
+  const content = [dataUrl(keyboard), dataUrl(keycaps), ...addons.map(dataUrl), { type: "text", text }];
   let lastError;
   // The model occasionally wraps or truncates the JSON; one retry covers that.
   for (let attempt = 0; attempt < 2; attempt++) {

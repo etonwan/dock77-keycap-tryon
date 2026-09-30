@@ -23,6 +23,7 @@ It edits the user's real photo instead of rendering a generic board: camera angl
 ## Operating Context
 
 - Inputs: 键盘/套件照片 (required, one), 键帽 base kit 图 (required, one), 键帽 add-on kit 图 (optional, up to 4).
+- Two 安装选项 switches, both off by default (the official main layout only): 用替换色键 installs the accent-colored duplicates a kit ships alongside the main layout (Esc, Enter, arrows, ...); 用 novelty 键 puts novelties (pictures instead of key names, from the base render or add-ons) on modifier keys, matched by size and row. Owner-chosen after seeing GMK Nightshade come out all dark.
 - The keyboard slot also offers the Dock77 in six colorways (浅灰, 深灰, 银色, 冰蓝, 冰粉, 蓝紫; owner-supplied renders in `public/presets/dock77/`, named by file name) instead of uploading a photo.
 - The base kit slot also offers a keycap library: 335 GMK sets (2020–2025) from a community GMK color guide, filterable by name, 12 color families, and year. Picking a set fills the base kit slot and, by default, the add-on slot with the set's other renders (max 4). Some sets have two base kits (e.g. light and dark); the visitor picks one. Each brand is a folder in `public/keycaps/<brand>/` (index.json, renders, thumbs); more brands are planned. The owner decided to show the renders without source attribution.
 - Generation runs as a server job with polling and takes about a minute or two; leaving the page mid-run is warned against.
