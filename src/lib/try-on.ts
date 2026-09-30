@@ -185,8 +185,8 @@ export function useTryOn() {
 
 export type TryOn = ReturnType<typeof useTryOn>
 
-// Playful lines shown while generating, one every 10 seconds across the
-// usual ~2 minutes. They set the mood; they are not real progress.
+// Playful lines shown while generating, one every 5 seconds across the
+// usual ~1 minute. They set the mood; they are not real progress.
 const WAITING_TIPS = [
   "开工啦，先去倒杯水吧",
   "正在拔下旧键帽…",
@@ -203,7 +203,7 @@ const WAITING_TIPS = [
 ]
 
 export const copy = {
-  eta: "全程约 2 分钟",
+  eta: "全程约 1 分钟",
   title: "键帽试衣间",
   keyboard: { label: "键盘/套件照片" },
   keycaps: { label: "键帽 base kit 图" },
@@ -216,9 +216,9 @@ export const copy = {
   /** One line above the stage; `missing` lists the labels of empty required slots. */
   status(phase: Phase, missing: string[], elapsed: number) {
     if (phase.kind === "running") {
-      if (elapsed >= 150) return "这把键盘有点讲究，再给师傅一点时间"
-      if (elapsed >= 120) return "比预计慢一点，好饭不怕晚"
-      return WAITING_TIPS[Math.floor(elapsed / 10)]
+      if (elapsed >= 90) return "这把键盘有点讲究，再给师傅一点时间"
+      if (elapsed >= 60) return "比预计慢一点，好饭不怕晚"
+      return WAITING_TIPS[Math.floor(elapsed / 5)]
     }
     if (phase.kind === "done") return "安装完成"
     if (phase.kind === "error") return phase.message
